@@ -1,75 +1,52 @@
 <!doctype html>
-<html lang="fa" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>PS5 Tracker</title>
-  <meta name="description" content="ردیاب بازی‌های PS5؛ بازی‌های تازه اضافه‌شده و بازی‌های اختصاصی PS5.">
+  <title>PS5 Game Tracker</title>
+  <meta name="description" content="Track newly discovered PS5 games and PS5-only titles.">
+  <meta property="og:title" content="PS5 Game Tracker">
+  <meta property="og:description" content="A simple tracker for newly discovered PS5 games and PS5-only titles.">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23090b10'/%3E%3Cpath d='M20 42h24M24 20h16v12H24z' fill='none' stroke='%23e6ff4f' stroke-width='5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://images.igdb.com">
   <style>
-    :root { color-scheme: dark; --bg:#08090d; --panel:#10131a; --panel2:#151923; --text:#f4f7fb; --muted:#8e97aa; --line:#242a37; --accent:#e5ff3f; --accent2:#9aa8ff; }
-    *{box-sizing:border-box} body{margin:0;background:radial-gradient(circle at top,#18202c 0,#08090d 34%);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
-    a{color:inherit;text-decoration:none}.wrap{width:min(1180px,calc(100% - 32px));margin:auto}.hero{padding:56px 0 26px}.brand{display:flex;align-items:center;gap:12px;color:var(--accent);font-weight:800;letter-spacing:.02em}.brand-dot{width:12px;height:12px;border-radius:50%;background:var(--accent);box-shadow:0 0 28px #e5ff3f66}.hero h1{font-size:clamp(34px,5vw,64px);line-height:1.03;margin:16px 0 12px;max-width:780px}.hero p{margin:0;max-width:760px;color:var(--muted);font-size:16px;line-height:1.9}.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin:22px 0}.tabs{display:flex;gap:8px;background:var(--panel);padding:6px;border:1px solid var(--line);border-radius:14px}.tab{border:0;background:transparent;color:var(--muted);padding:11px 15px;border-radius:9px;cursor:pointer;font:inherit}.tab.active{background:var(--panel2);color:var(--text)}.search{min-width:260px;flex:1;max-width:360px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;color:var(--text);outline:none}.stats{display:flex;gap:16px;color:var(--muted);font-size:13px}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:18px;padding:8px 0 48px}.card{background:linear-gradient(180deg,#121620,#0e1118);border:1px solid var(--line);border-radius:16px;overflow:hidden;transition:transform .18s,border-color .18s,box-shadow .18s}.card:hover{transform:translateY(-4px);border-color:#3b4353;box-shadow:0 18px 40px #0006}.cover{aspect-ratio:3/4;display:block;background:#1a1e27;overflow:hidden}.cover img{width:100%;height:100%;object-fit:cover;display:block}.placeholder{display:grid;place-items:center;height:100%;padding:18px;color:#687184;font-size:13px;text-align:center}.body{padding:12px}.name{font-weight:700;line-height:1.5;min-height:3em}.meta{margin-top:8px;color:var(--muted);font-size:12px}.badge{display:inline-flex;margin-top:9px;font-size:11px;padding:5px 8px;border-radius:999px;background:#e5ff3f14;color:var(--accent);border:1px solid #e5ff3f2b}.empty{padding:50px 0;text-align:center;color:var(--muted)}.footer{border-top:1px solid var(--line);padding:24px 0 42px;color:#71798a;font-size:12px;line-height:1.8}@media(max-width:640px){.wrap{width:min(100% - 20px,1180px)}.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.search{min-width:100%;max-width:none}.toolbar{align-items:stretch}.tabs{overflow:auto}.tab{white-space:nowrap}}
+    :root{color-scheme:dark;--bg:#080a0f;--panel:#10141c;--panel2:#171c26;--text:#f5f7fb;--muted:#929bad;--line:#252c39;--accent:#e6ff4f;--shadow:0 18px 45px rgba(0,0,0,.3)}
+    *{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#1a2432 0,#080a0f 36%);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}a{text-decoration:none;color:inherit}.wrap{width:min(1200px,calc(100% - 28px));margin:auto}.hero{padding:42px 0 20px}.topline{display:flex;justify-content:space-between;align-items:center;gap:16px}.brand{font-weight:900;letter-spacing:.08em}.lang{display:flex;gap:6px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:4px}.lang button{border:0;background:transparent;color:var(--muted);padding:8px 11px;border-radius:8px;cursor:pointer;font:inherit}.lang button.active{background:var(--panel2);color:var(--text)}h1{font-size:clamp(36px,6vw,68px);margin:26px 0 12px;line-height:1.02;max-width:820px}.sub{margin:0;color:var(--muted);line-height:1.8;max-width:760px}.toolbar{margin:24px 0 18px;display:grid;gap:12px}.row{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}.tabs{display:flex;gap:7px;overflow:auto;background:var(--panel);border:1px solid var(--line);padding:5px;border-radius:13px}.tab{white-space:nowrap;border:0;background:transparent;color:var(--muted);padding:10px 13px;border-radius:9px;cursor:pointer;font:inherit}.tab.active{background:var(--panel2);color:var(--text)}.search{width:min(380px,100%);background:var(--panel);border:1px solid var(--line);color:var(--text);padding:12px 14px;border-radius:12px;outline:none}.search:focus{border-color:#414b60}.stats{display:flex;gap:14px;color:var(--muted);font-size:13px}.grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:14px}.card{background:linear-gradient(180deg,#121720,#0d1118);border:1px solid var(--line);border-radius:15px;overflow:hidden;transition:.18s transform,.18s border-color,.18s box-shadow}.card:hover{transform:translateY(-4px);border-color:#414a5b;box-shadow:var(--shadow)}.cover{aspect-ratio:3/4;background:#171c25;overflow:hidden}.cover img{width:100%;height:100%;object-fit:cover;display:block}.placeholder{height:100%;display:grid;place-items:center;padding:18px;color:#70798b;text-align:center;font-size:12px}.body{padding:11px}.name{font-weight:750;line-height:1.4;min-height:2.8em}.meta{margin-top:7px;color:var(--muted);font-size:11px;line-height:1.5}.badge{display:inline-flex;margin-top:8px;padding:4px 7px;border-radius:999px;border:1px solid #e6ff4f2b;background:#e6ff4f12;color:var(--accent);font-size:10px;font-weight:800}.pager{display:flex;justify-content:center;align-items:center;gap:8px;margin:24px 0 40px}.pager button{border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:10px;padding:9px 13px;cursor:pointer}.pager button:disabled{opacity:.4;cursor:not-allowed}.empty{padding:50px 0;text-align:center;color:var(--muted)}footer{border-top:1px solid var(--line);padding:22px 0 40px;color:#717a8c;font-size:12px;line-height:1.8}@media(max-width:1000px){.grid{grid-template-columns:repeat(5,minmax(0,1fr))}}@media(max-width:780px){.grid{grid-template-columns:repeat(4,minmax(0,1fr))}}@media(max-width:560px){.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.wrap{width:min(100% - 18px,1200px)}h1{font-size:40px}.row{align-items:stretch}.search{width:100%}.stats{justify-content:space-between;width:100%}}
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <header class="hero">
-      <div class="brand"><span class="brand-dot"></span> PS5 TRACKER</div>
-      <h1>بازی‌های PS5، بدون گشتن بین صدها صفحه</h1>
-      <p>لیست بازی‌ها به‌صورت خودکار به‌روزرسانی می‌شود. برای هر عنوان، تصویر و اطلاعات پلتفرم از داده‌های بازی دریافت می‌شود و با کلیک، صفحه‌ی همان بازی در منبع باز می‌شود.</p>
-    </header>
-
-    <div class="toolbar">
-      <div class="tabs">
-        <button class="tab active" data-tab="recent">جدیدترین‌ها · ۷۲ ساعت</button>
-        <button class="tab" data-tab="exclusive">اختصاصی PS5</button>
-        <button class="tab" data-tab="all">همه</button>
-      </div>
-      <input id="search" class="search" type="search" placeholder="جستجوی بازی…" aria-label="جستجوی بازی">
-      <div class="stats"><span id="count">۰ بازی</span><span id="updated">در حال بارگذاری…</span></div>
-    </div>
-
-    <main id="grid" class="grid"></main>
-    <div id="empty" class="empty" hidden>بازی‌ای مطابق فیلتر فعلی پیدا نشد.</div>
-
-    <footer class="footer">داده‌های نمایش‌داده‌شده از فایل data/games.json در همین ریپو خوانده می‌شوند. زمان «جدید» بر اساس first_seen ثبت‌شده در GitHub Actions محاسبه می‌شود.</footer>
-  </div>
-
+<div class="wrap">
+  <header class="hero">
+    <div class="topline"><div class="brand">PS5 GAME TRACKER</div><div class="lang"><button id="lang-fa">فا</button><button id="lang-en">EN</button></div></div>
+    <h1 id="title">PS5 Game Tracker</h1>
+    <p id="sub" class="sub">Automatically updated PS5 game tracking, with quick links to each source page.</p>
+  </header>
+  <section class="toolbar">
+    <div class="row"><div class="tabs"><button class="tab active" data-tab="recent">Latest · 72h</button><button class="tab" data-tab="exclusive">PS5 Only</button><button class="tab" data-tab="all">All</button></div><input id="search" class="search" type="search" placeholder="Search games…"></div>
+    <div class="row"><div class="stats"><span id="count">0 games</span><span id="updated">Loading…</span></div></div>
+  </section>
+  <main id="grid" class="grid"></main>
+  <div id="empty" class="empty" hidden></div>
+  <div class="pager"><button id="prev">←</button><span id="page">1 / 1</span><button id="next">→</button></div>
+  <footer id="footer">Source links point to DLPSGames. “Latest” is based on the first time this tracker observed a title.</footer>
+</div>
 <script>
-  const state = { games: [], tab: 'recent', query: '' };
-  const $ = (id) => document.getElementById(id);
-  const faNum = (n) => new Intl.NumberFormat('fa-IR').format(n);
-  const hoursSince = (date) => (Date.now() - new Date(date).getTime()) / 36e5;
-  const recent = (g) => Number.isFinite(hoursSince(g.first_seen)) && hoursSince(g.first_seen) <= 72;
-
-  function card(g) {
-    const href = g.source_url || '#';
-    const cover = g.cover_url ? `<img loading="lazy" src="${g.cover_url}" alt="${escapeHtml(g.name)}">` : `<div class="placeholder">تصویر برای این عنوان ثبت نشده است</div>`;
-    const badge = g.ps5_exclusive ? '<div class="badge">PS5 ONLY</div>' : '';
-    return `<a class="card" href="${href}" target="_blank" rel="noopener noreferrer"><div class="cover">${cover}</div><div class="body"><div class="name">${escapeHtml(g.name)}</div><div class="meta">${g.platforms?.length ? escapeHtml(g.platforms.join(' · ')) : 'اطلاعات پلتفرم ثبت نشده'}</div>${badge}</div></a>`;
-  }
-  function escapeHtml(s='') { return String(s).replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
-  function render() {
-    const q = state.query.trim().toLocaleLowerCase();
-    let games = state.games.filter(g => !q || String(g.name).toLocaleLowerCase().includes(q));
-    if (state.tab === 'recent') games = games.filter(recent);
-    if (state.tab === 'exclusive') games = games.filter(g => g.ps5_exclusive === true);
-    games.sort((a,b)=>new Date(b.first_seen||0)-new Date(a.first_seen||0));
-    $('grid').innerHTML = games.map(card).join('');
-    $('empty').hidden = games.length !== 0;
-    $('count').textContent = `${faNum(games.length)} بازی`;
-  }
-  document.querySelectorAll('.tab').forEach(btn => btn.addEventListener('click', () => {
-    document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active'); state.tab = btn.dataset.tab; render();
-  }));
-  $('search').addEventListener('input', e => { state.query = e.target.value; render(); });
-
-  fetch('./data/games.json', {cache:'no-store'})
-    .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
-    .then(data => { state.games = Array.isArray(data) ? data : []; const dates=state.games.map(g=>new Date(g.first_seen).getTime()).filter(Number.isFinite); if(dates.length) $('updated').textContent=`آخرین کشف: ${new Date(Math.max(...dates)).toLocaleString('fa-IR',{dateStyle:'medium'})}`; else $('updated').textContent=''; render(); })
-    .catch(err => { $('updated').textContent='خطا در بارگذاری داده'; $('empty').hidden=false; $('empty').textContent=`خواندن data/games.json ناموفق بود: ${err.message}`; });
+const state={games:[],tab:'recent',query:'',page:1,perPage:60,lang:'en'};
+const $=id=>document.getElementById(id);
+const I18N={en:{title:'PS5 Game Tracker',sub:'Automatically updated PS5 game tracking, with quick links to each source page.',latest:'Latest · 72h',exclusive:'PS5 Only',all:'All',search:'Search games…',games:n=>`${n} games`,latestDiscovery:d=>`Latest discovery: ${d}`,loading:'Loading…',empty:'No games match this view.',missing:'No cover available',unknown:'Platform info unavailable',only:'PS5 ONLY',footer:'Source links point to DLPSGames. “Latest” is based on the first time this tracker observed a title.'},fa:{title:'PS5 Game Tracker',sub:'ردیابی خودکار بازی‌های PS5 با دسترسی مستقیم به صفحه هر بازی.',latest:'جدید · ۷۲ ساعت',exclusive:'PS5 Only',all:'همه',search:'جستجوی بازی…',games:n=>`${n.toLocaleString('fa-IR')} بازی`,latestDiscovery:d=>`آخرین کشف: ${d}`,loading:'در حال بارگذاری…',empty:'بازی‌ای مطابق این فیلتر پیدا نشد.',missing:'تصویری ثبت نشده',unknown:'اطلاعات پلتفرم موجود نیست',only:'PS5 ONLY',footer:'لینک هر کارت به صفحه بازی در DLPSGames می‌رود. «جدید» بر اساس اولین مشاهده عنوان توسط این Tracker محاسبه می‌شود.'}};
+function text(){return I18N[state.lang]}
+function safeStorageGet(){try{return localStorage.getItem('ps5-tracker-lang')}catch{return null}}
+function safeStorageSet(v){try{localStorage.setItem('ps5-tracker-lang',v)}catch{}}
+function escapeHtml(s=''){return String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
+function hoursSince(d){const t=new Date(d).getTime();return Number.isFinite(t)?(Date.now()-t)/36e5:Infinity}
+function recent(g){return hoursSince(g.first_seen)<=72}
+function setLang(lang){state.lang=lang;safeStorageSet(lang);document.documentElement.lang=lang;document.documentElement.dir=lang==='fa'?'rtl':'ltr';$('title').textContent=text().title;$('sub').textContent=text().sub;$('search').placeholder=text().search;$('footer').textContent=text().footer;document.querySelector('[data-tab="recent"]').textContent=text().latest;document.querySelector('[data-tab="exclusive"]').textContent=text().exclusive;document.querySelector('[data-tab="all"]').textContent=text().all;$('lang-fa').classList.toggle('active',lang==='fa');$('lang-en').classList.toggle('active',lang==='en');render()}
+function card(g){const href=g.source_url||'#';const img=g.cover_url?`<img loading="lazy" src="${escapeHtml(g.cover_url)}" alt="${escapeHtml(g.name)}">`:`<div class="placeholder">${text().missing}</div>`;const platforms=(g.platforms||[]).join(' · ')||text().unknown;const badge=g.ps5_exclusive?`<div class="badge">${text().only}</div>`:'';return `<a class="card" href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer"><div class="cover">${img}</div><div class="body"><div class="name">${escapeHtml(g.name)}</div><div class="meta">${escapeHtml(platforms)}</div>${badge}</div></a>`}
+function render(){let games=state.games.filter(g=>!state.query||String(g.name).toLocaleLowerCase().includes(state.query.toLocaleLowerCase()));if(state.tab==='recent')games=games.filter(recent);if(state.tab==='exclusive')games=games.filter(g=>g.ps5_exclusive===true);games.sort((a,b)=>new Date(b.first_seen||0)-new Date(a.first_seen||0));const pages=Math.max(1,Math.ceil(games.length/state.perPage));state.page=Math.min(state.page,pages);const start=(state.page-1)*state.perPage;const visible=games.slice(start,start+state.perPage);$('grid').innerHTML=visible.map(card).join('');$('empty').hidden=games.length>0;$('empty').textContent=text().empty;$('count').textContent=text().games(games.length);$('page').textContent=`${state.page} / ${pages}`;$('prev').disabled=state.page<=1;$('next').disabled=state.page>=pages}
+document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));b.classList.add('active');state.tab=b.dataset.tab;state.page=1;render()}));$('search').addEventListener('input',e=>{state.query=e.target.value;state.page=1;render()});$('prev').addEventListener('click',()=>{state.page--;render();scrollTo({top:0,behavior:'smooth'})});$('next').addEventListener('click',()=>{state.page++;render();scrollTo({top:0,behavior:'smooth'})});$('lang-fa').addEventListener('click',()=>setLang('fa'));$('lang-en').addEventListener('click',()=>setLang('en'));
+fetch('./data/games.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error(`HTTP ${r.status}`);return r.json()}).then(data=>{state.games=Array.isArray(data)?data:[];const dates=state.games.map(g=>new Date(g.first_seen).getTime()).filter(Number.isFinite);$('updated').textContent=dates.length?text().latestDiscovery(new Date(Math.max(...dates)).toLocaleString(state.lang==='fa'?'fa-IR':'en-US',{dateStyle:'medium'})):'';render()}).catch(err=>{$('updated').textContent='';$('empty').hidden=false;$('empty').textContent=`${text().empty} (${err.message})`});
+setLang(safeStorageGet()==='fa'?'fa':'en');
 </script>
 </body>
 </html>

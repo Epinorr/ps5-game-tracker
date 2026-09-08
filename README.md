@@ -1,66 +1,129 @@
 # PS5 Game Tracker
 
-A lightweight, automated tracker for discovering newly added PS5 games and highlighting titles that are exclusive to PlayStation 5.
+PS5 Game Tracker is a small automated tracker that monitors the PS5 game list published by DLPSGames and turns it into a searchable, mobile-friendly catalog.
 
-The project monitors the PS5 game directory published by **DLPSGames**, keeps a local history of discovered titles, enriches the data with game metadata, and presents everything through a simple static web interface.
+## What it does
 
-## Overview
+The tracker watches the source list on a fixed schedule and records when each title is first observed. This powers the **Latest · 72h** view without relying on publication metadata that the source page does not provide.
 
-PS5 Game Tracker is designed around a simple idea: turn a constantly changing game list into a useful, browsable feed.
+Each game can also be enriched with metadata from IGDB, including cover art and platform information. Titles that have PS5 metadata and no PS4 release are marked **PS5 ONLY**.
 
-The tracker continuously compares the current DLPSGames PS5 list with the previously saved dataset. When a new game appears for the first time, the project records when it was discovered. This makes it possible to provide a **"New in the last 72 hours"** view even though the source website does not publish an official date for when each entry was added.
+Every card links directly to the corresponding game page on DLPSGames.
 
-The frontend then turns that data into game cards with cover art, title, platform information, and a direct link to the game's page on DLPSGames.
+## Highlights
 
-## Features
+- Automatic source monitoring every 6 hours.
+- Direct source fetching with Jina Reader fallback when the source blocks automated requests.
+- Source URL preservation for direct game-page links.
+- IGDB enrichment with batched requests and fuzzy title matching.
+- Latest 72-hour, PS5-only, and all-games views.
+- Search and client-side pagination for large datasets.
+- English / Persian interface with remembered language preference.
+- GitHub Actions handles testing, data updates, commits, and GitHub Pages deployment.
+- Automatic warning issue when the fallback fetch path is required.
+- Local tests for scraper behavior and title normalization.
 
-- **New games — 72 hours**
-  Shows titles first detected within the previous 72 hours.
-
-- **PS5-only games**
-  Highlights games identified as having no PS4 release.
-
-- **Game covers and metadata**
-  Uses IGDB metadata when available to provide cover artwork and platform information.
-
-- **Direct game pages**
-  Each game card links to its corresponding page on DLPSGames.
-
-- **Automatic updates**
-  GitHub Actions periodically checks the source list and updates the project's dataset automatically.
-
-- **Static frontend**
-  The website is built with plain HTML, CSS, and JavaScript and can be served through GitHub Pages without a separate backend.
-
-- **Persistent discovery history**
-  Detected games and their metadata are stored in `data/games.json`, allowing the project to keep track of what it has already seen.
-
-## How it works
+## How the data is produced
 
 ```text
-DLPSGames PS5 List
-        │
-        ▼
-   Game list scraper
-        │
-        ▼
-Compare with games.json
-        │
-        ├── New title → record first_seen
-        │
-        ▼
-   Metadata enrichment
-        │
-        ▼
-     games.json
-        │
-        ▼
-   Static web frontend
-        │
-        ▼
-  Browse / Search / Filter
+DLPSGames
+   │
+   ├── direct request
+   │      └── 403 / failure → Jina Reader fallback
+   │
+   ▼
+Game names + source URLs
+   │
+   ├── compare with data/games.json
+   ├── assign first_seen to new discoveries
+   └── enrich missing metadata through IGDB
+   │
+   ▼
+data/games.json
+   │
+   ▼
+GitHub Pages frontend
 ```
 
-The updater extracts game names and their original page URLs from the source list. Existing entries are preserved, while newly discovered titles receive a `first_seen` timestamp. Metadata such as platform information and cover art can then be attached to each record.
+The source page does not expose a reliable “date added” field, so `first_seen` represents the first time this tracker observed a title. It is not a claim about when the game was actually added by the source.
 
-The website reads the generated JSON directly and builds the interface in the browser, so no application server or database is required.
+## Reliability model
+
+The updater intentionally fails when the detected list becomes implausibly small, instead of silently replacing a healthy dataset with bad or incomplete data. Large count swings are logged as warnings so source changes are visible in Actions logs.
+
+When direct access to DLPSGames fails, the updater falls back to Jina Reader. A GitHub issue is opened once while that fallback remains active, making source-access problems visible without opening duplicate issues every run.
+
+Metadata enrichment is best-effort: temporary IGDB failures do not remove metadata already saved in the dataset.
+
+## Repository structure
+
+```text
+.
+├── .github/
+│   └── workflows/
+│       └── update.yml
+├── data/
+│   └── games.json
+├── scripts/
+│   └── update_games.py
+├── tests/
+│   └── test_scraper.py
+├── .gitignore
+├── index.html
+├── requirements.txt
+└── README.md
+```
+
+## Main components
+
+### `scripts/update_games.py`
+
+The data pipeline. It fetches the source list, extracts game names and URLs, compares them with the existing dataset, enriches missing metadata through IGDB, and writes the normalized JSON dataset.
+
+### `data/games.json`
+
+The generated data consumed by the frontend. Records include the observed timestamp, source URL, platform information, optional IGDB identifiers, cover art, and the PS5-only flag.
+
+### `index.html`
+
+A static frontend served directly by GitHub Pages. It provides language switching, search, filters, pagination, lazy-loaded covers, and direct source links.
+
+### `.github/workflows/update.yml`
+
+The single automation pipeline. It runs every 6 hours (and manually on demand), executes the tests, updates the dataset, commits changes when needed, and deploys the current repository to GitHub Pages.
+
+## Data shape
+
+A typical record looks like this:
+
+```json
+{
+  "name": "Returnal",
+  "first_seen": "2026-09-05T00:00:00Z",
+  "source_url": "https://dlpsgame.com/...",
+  "igdb_id": 12345,
+  "igdb_name": "Returnal",
+  "cover_url": "https://images.igdb.com/...",
+  "platforms": ["PlayStation 5", "PC"],
+  "ps5_exclusive": true
+}
+```
+
+## Automation requirements
+
+The repository expects two GitHub Actions secrets for IGDB enrichment:
+
+- `IGDB_CLIENT_ID`
+- `IGDB_CLIENT_SECRET`
+
+The workflow also uses GitHub's built-in `GITHUB_TOKEN` for repository commits and issue reporting. No application server or external database is required.
+
+## Limitations
+
+- The 72-hour view is based on observation time, not source publication time.
+- PS5-only detection depends on IGDB platform metadata and therefore may be incomplete for ambiguous or missing records.
+- Source-site HTML changes can still require scraper maintenance even with multiple extraction strategies and health checks.
+
+## License
+
+No license is included yet. Until one is added, the repository should be treated as **all rights reserved**.

@@ -1,2 +1,4 @@
 requests>=2.32,<3
 beautifulsoup4>=4.12,<5
+rapidfuzz>=3.9,<4
+pytest>=8.3,<9
