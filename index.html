@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PS5 Tracker</title>
+  <meta name="description" content="ردیاب بازی‌های PS5؛ بازی‌های تازه اضافه‌شده و بازی‌های اختصاصی PS5.">
+  <link rel="preconnect" href="https://images.igdb.com">
+  <style>
+    :root { color-scheme: dark; --bg:#08090d; --panel:#10131a; --panel2:#151923; --text:#f4f7fb; --muted:#8e97aa; --line:#242a37; --accent:#e5ff3f; --accent2:#9aa8ff; }
+    *{box-sizing:border-box} body{margin:0;background:radial-gradient(circle at top,#18202c 0,#08090d 34%);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+    a{color:inherit;text-decoration:none}.wrap{width:min(1180px,calc(100% - 32px));margin:auto}.hero{padding:56px 0 26px}.brand{display:flex;align-items:center;gap:12px;color:var(--accent);font-weight:800;letter-spacing:.02em}.brand-dot{width:12px;height:12px;border-radius:50%;background:var(--accent);box-shadow:0 0 28px #e5ff3f66}.hero h1{font-size:clamp(34px,5vw,64px);line-height:1.03;margin:16px 0 12px;max-width:780px}.hero p{margin:0;max-width:760px;color:var(--muted);font-size:16px;line-height:1.9}.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin:22px 0}.tabs{display:flex;gap:8px;background:var(--panel);padding:6px;border:1px solid var(--line);border-radius:14px}.tab{border:0;background:transparent;color:var(--muted);padding:11px 15px;border-radius:9px;cursor:pointer;font:inherit}.tab.active{background:var(--panel2);color:var(--text)}.search{min-width:260px;flex:1;max-width:360px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;color:var(--text);outline:none}.stats{display:flex;gap:16px;color:var(--muted);font-size:13px}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:18px;padding:8px 0 48px}.card{background:linear-gradient(180deg,#121620,#0e1118);border:1px solid var(--line);border-radius:16px;overflow:hidden;transition:transform .18s,border-color .18s,box-shadow .18s}.card:hover{transform:translateY(-4px);border-color:#3b4353;box-shadow:0 18px 40px #0006}.cover{aspect-ratio:3/4;display:block;background:#1a1e27;overflow:hidden}.cover img{width:100%;height:100%;object-fit:cover;display:block}.placeholder{display:grid;place-items:center;height:100%;padding:18px;color:#687184;font-size:13px;text-align:center}.body{padding:12px}.name{font-weight:700;line-height:1.5;min-height:3em}.meta{margin-top:8px;color:var(--muted);font-size:12px}.badge{display:inline-flex;margin-top:9px;font-size:11px;padding:5px 8px;border-radius:999px;background:#e5ff3f14;color:var(--accent);border:1px solid #e5ff3f2b}.empty{padding:50px 0;text-align:center;color:var(--muted)}.footer{border-top:1px solid var(--line);padding:24px 0 42px;color:#71798a;font-size:12px;line-height:1.8}@media(max-width:640px){.wrap{width:min(100% - 20px,1180px)}.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.search{min-width:100%;max-width:none}.toolbar{align-items:stretch}.tabs{overflow:auto}.tab{white-space:nowrap}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="hero">
+      <div class="brand"><span class="brand-dot"></span> PS5 TRACKER</div>
+      <h1>بازی‌های PS5، بدون گشتن بین صدها صفحه</h1>
+      <p>لیست بازی‌ها به‌صورت خودکار به‌روزرسانی می‌شود. برای هر عنوان، تصویر و اطلاعات پلتفرم از داده‌های بازی دریافت می‌شود و با کلیک، صفحه‌ی همان بازی در منبع باز می‌شود.</p>
+    </header>
+
+    <div class="toolbar">
+      <div class="tabs">
+        <button class="tab active" data-tab="recent">جدیدترین‌ها · ۷۲ ساعت</button>
+        <button class="tab" data-tab="exclusive">اختصاصی PS5</button>
+        <button class="tab" data-tab="all">همه</button>
+      </div>
+      <input id="search" class="search" type="search" placeholder="جستجوی بازی…" aria-label="جستجوی بازی">
+      <div class="stats"><span id="count">۰ بازی</span><span id="updated">در حال بارگذاری…</span></div>
+    </div>
+
+    <main id="grid" class="grid"></main>
+    <div id="empty" class="empty" hidden>بازی‌ای مطابق فیلتر فعلی پیدا نشد.</div>
+
+    <footer class="footer">داده‌های نمایش‌داده‌شده از فایل data/games.json در همین ریپو خوانده می‌شوند. زمان «جدید» بر اساس first_seen ثبت‌شده در GitHub Actions محاسبه می‌شود.</footer>
+  </div>
+
+<script>
+  const state = { games: [], tab: 'recent', query: '' };
+  const $ = (id) => document.getElementById(id);
+  const faNum = (n) => new Intl.NumberFormat('fa-IR').format(n);
+  const hoursSince = (date) => (Date.now() - new Date(date).getTime()) / 36e5;
+  const recent = (g) => Number.isFinite(hoursSince(g.first_seen)) && hoursSince(g.first_seen) <= 72;
+
+  function card(g) {
+    const href = g.source_url || '#';
+    const cover = g.cover_url ? `<img loading="lazy" src="${g.cover_url}" alt="${escapeHtml(g.name)}">` : `<div class="placeholder">تصویر برای این عنوان ثبت نشده است</div>`;
+    const badge = g.ps5_exclusive ? '<div class="badge">PS5 ONLY</div>' : '';
+    return `<a class="card" href="${href}" target="_blank" rel="noopener noreferrer"><div class="cover">${cover}</div><div class="body"><div class="name">${escapeHtml(g.name)}</div><div class="meta">${g.platforms?.length ? escapeHtml(g.platforms.join(' · ')) : 'اطلاعات پلتفرم ثبت نشده'}</div>${badge}</div></a>`;
+  }
+  function escapeHtml(s='') { return String(s).replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
+  function render() {
+    const q = state.query.trim().toLocaleLowerCase();
+    let games = state.games.filter(g => !q || String(g.name).toLocaleLowerCase().includes(q));
+    if (state.tab === 'recent') games = games.filter(recent);
+    if (state.tab === 'exclusive') games = games.filter(g => g.ps5_exclusive === true);
+    games.sort((a,b)=>new Date(b.first_seen||0)-new Date(a.first_seen||0));
+    $('grid').innerHTML = games.map(card).join('');
+    $('empty').hidden = games.length !== 0;
+    $('count').textContent = `${faNum(games.length)} بازی`;
+  }
+  document.querySelectorAll('.tab').forEach(btn => btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active'); state.tab = btn.dataset.tab; render();
+  }));
+  $('search').addEventListener('input', e => { state.query = e.target.value; render(); });
+
+  fetch('./data/games.json', {cache:'no-store'})
+    .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
+    .then(data => { state.games = Array.isArray(data) ? data : []; const dates=state.games.map(g=>new Date(g.first_seen).getTime()).filter(Number.isFinite); if(dates.length) $('updated').textContent=`آخرین کشف: ${new Date(Math.max(...dates)).toLocaleString('fa-IR',{dateStyle:'medium'})}`; else $('updated').textContent=''; render(); })
+    .catch(err => { $('updated').textContent='خطا در بارگذاری داده'; $('empty').hidden=false; $('empty').textContent=`خواندن data/games.json ناموفق بود: ${err.message}`; });
+</script>
+</body>
+</html>
