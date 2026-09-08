@@ -63,6 +63,52 @@ def canonical_url(url: str) -> str:
     return rebuilt.geturl().rstrip("/")
 
 
+def load_data() -> list[dict[str, Any]]:
+    if not DATA_PATH.exists():
+        return []
+    try:
+        raw = json.loads(DATA_PATH.read_text(encoding="utf-8"))
+        if not isinstance(raw, list):
+            raise ValueError("games.json must contain a JSON array")
+        return [x for x in raw if isinstance(x, dict) and x.get("name")]
+    except Exception as exc:
+        raise RuntimeError(f"Could not read {DATA_PATH}: {exc}") from exc
+
+
+def save_data(games: list[dict[str, Any]]) -> None:
+    DATA_PATH.parent.mkdir(parents=True, exist_ok=True)
+    DATA_PATH.write_text(json.dumps(games, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+
+def _request_source(url: str) -> requests.Response:
+    headers = {
+        "User-Agent": "Mozilla/5.0 (compatible; PS5-Game-Tracker/2.1; +https://github.com/)",
+        "Accept": "text/html,application/xhtml+xml,text/plain;q=0.9,*/*;q=0.8",
+        "Accept-Language": "en-US,en;q=0.8",
+    }
+    return SESSION.get(url, headers=headers, timeout=REQUEST_TIMEOUT)
+
+
+def fetch_source() -> tuple[str, bool]:
+    try:
+        resp = _request_source(SOURCE_URL)
+        resp.raise_for_status()
+        if len(resp.text) < 1000:
+            raise RuntimeError("Source page returned unexpectedly little content")
+        LOG.info("Source fetched directly")
+        return resp.text, False
+    except Exception as exc:
+        LOG.warning("Direct source request failed: %s", exc)
+
+    resp = _request_source(JINA_URL)
+    resp.raise_for_status()
+    if len(resp.text) < 1000:
+        raise RuntimeError("Jina Reader returned unexpectedly little content")
+    LOG.info("Source fetched via jina")
+    report_jina_fallback()
+    return resp.text, True
+
+
 def _is_source_domain(url: str) -> bool:
     host = urlparse(url).netloc.lower().split(":", 1)[0]
     return host in {"dlpsgame.com", "www.dlpsgame.com"}
@@ -296,7 +342,6 @@ def igdb_batch_lookup(names: list[str], token: str) -> dict[str, dict[str, Any]]
 
 
 def index_existing(existing: list[dict[str, Any]]) -> tuple[dict[str, dict[str, Any]], dict[str, dict[str, Any]]]:
-    by_url: dict[str, dict[str, Any]] = {}
     by_url: dict[str, dict[str, Any]] = {}
     legacy_by_name: dict[str, dict[str, Any]] = {}
     for game in existing:

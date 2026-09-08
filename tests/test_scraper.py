@@ -50,3 +50,22 @@ def test_ps5_is_not_exclusive_when_ps4_exists():
         ],
     }
     assert _transform_game(item)["ps5_exclusive"] is False
+
+
+
+def test_extract_games_rejects_images_and_non_game_links(monkeypatch):
+    monkeypatch.setattr("scripts.update_games.MIN_EXPECTED_GAMES", 1)
+    sample = """
+    <html><body><main>
+      <a href="https://dlpsgame.com/returnal-ps5/">Returnal</a>
+      <a href="https://dlpsgame.com/wp-content/uploads/2026/01/image-4.jpg">Image 4</a>
+      <a href="https://dlpsgame.com/category/action/">Action</a>
+      <a href="https://dlpsgame.com/image-4/">Image 4</a>
+    </main></body></html>
+    Markdown image: ![Image 4](https://dlpsgame.com/wp-content/uploads/2026/01/image-4.jpg)
+    Markdown link: [Astro Bot](https://dlpsgame.com/astro-bot/)
+    """
+    games = extract_games(sample)
+    assert {g["name"] for g in games} == {"Returnal", "Astro Bot"}
+    assert all("image" not in g["url"].lower() for g in games)
+    assert all("category" not in g["url"].lower() for g in games)
