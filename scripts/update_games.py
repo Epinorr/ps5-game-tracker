@@ -49,20 +49,48 @@ def save_data(games: list[dict[str, Any]]) -> None:
     DATA_PATH.write_text(json.dumps(games, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
 
 
-def fetch_source() -> str:
+def fetch_source() -> tuple[str, str]:
     headers = {
         'User-Agent': 'Mozilla/5.0 (compatible; PS5-Tracker/1.0; +https://github.com/)',
-        'Accept': 'text/html,application/xhtml+xml',
+        'Accept': 'text/html,application/xhtml+xml,text/plain;q=0.9,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.8',
+        'Cache-Control': 'no-cache',
     }
-    resp = requests.get(SOURCE_URL, headers=headers, timeout=REQUEST_TIMEOUT)
-    resp.raise_for_status()
-    if len(resp.text) < 1000:
-        raise RuntimeError('Source page returned unexpectedly little HTML')
-    return resp.text
+
+    # Try the source directly first. Some hosts block GitHub Actions IPs.
+    try:
+        resp = requests.get(SOURCE_URL, headers=headers, timeout=REQUEST_TIMEOUT)
+        resp.raise_for_status()
+        if len(resp.text) >= 1000:
+            return resp.text, 'direct'
+        LOG.warning('Direct source response was unexpectedly small (%d bytes)', len(resp.text))
+    except requests.RequestException as exc:
+        LOG.warning('Direct source request failed: %s', exc)
+
+    # Fallback: Jina Reader fetches the page through its own infrastructure.
+    reader_url = 'https://r.jina.ai/' + SOURCE_URL
+    reader_headers = {
+        'User-Agent': 'PS5-Tracker/1.0',
+        'Accept': 'text/plain,text/markdown;q=0.9,*/*;q=0.8',
+    }
+    jina_key = os.getenv('JINA_API_KEY')
+    if jina_key:
+        reader_headers['Authorization'] = f'Bearer {jina_key}'
+
+    try:
+        resp = requests.get(reader_url, headers=reader_headers, timeout=REQUEST_TIMEOUT)
+        resp.raise_for_status()
+        if len(resp.text) < 100:
+            raise RuntimeError('Jina Reader returned unexpectedly little content')
+        return resp.text, 'jina'
+    except requests.RequestException as exc:
+        raise RuntimeError(
+            f'Could not fetch source directly or through Jina Reader. Source={SOURCE_URL}. Error={exc}'
+        ) from exc
 
 
-def extract_games(html: str) -> list[dict[str, str]]:
-    soup = BeautifulSoup(html, 'html.parser')
+def extract_games(content: str) -> list[dict[str, str]]:
+    soup = BeautifulSoup(content, 'html.parser')
     candidates: list[tuple[int, str, str]] = []
 
     # First preference: numbered list items / anchors containing game-like links.
@@ -87,6 +115,21 @@ def extract_games(html: str) -> list[dict[str, str]]:
             href = urljoin(SOURCE_URL, href)
             if href.startswith(('http://', 'https://')):
                 candidates.append((1, name, href))
+
+    # Jina Reader normally returns Markdown rather than raw HTML. Extract Markdown links too.
+    if len(candidates) < 10:
+        for match in re.finditer(r'\[([^\]]{2,140})\]\((https?://[^)\s]+)\)', content):
+            name = normalize_name(match.group(1))
+            href = match.group(2).strip()
+            candidates.append((2, name, href))
+
+    # Some Reader responses expose bare URLs in a list. Use nearby line text as the title when possible.
+    if len(candidates) < 10:
+        for line in content.splitlines():
+            line = line.strip()
+            match = re.match(r'[-*]\s*(?:\d+[.)]\s*)?(.+?)\s*[-–—:]\s*(https?://\S+)$', line)
+            if match:
+                candidates.append((3, normalize_name(match.group(1)), match.group(2).rstrip(').,')))
 
     # Filter obvious navigation / utility links while preserving natural source ordering.
     bad = {
@@ -175,8 +218,9 @@ def igdb_lookup(name: str, token: str) -> dict[str, Any] | None:
 
 def main() -> int:
     logging.basicConfig(level=logging.INFO, format='%(levelname)s %(message)s')
-    html = fetch_source()
-    discovered = extract_games(html)
+    content, source_method = fetch_source()
+    LOG.info('Source fetched via %s', source_method)
+    discovered = extract_games(content)
     LOG.info('Detected %d game links', len(discovered))
 
     now = utc_now()
