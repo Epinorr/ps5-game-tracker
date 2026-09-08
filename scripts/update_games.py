@@ -270,83 +270,138 @@ def _escape_apicalypse(value: str) -> str:
 def _platforms(item: dict[str, Any]) -> list[str]:
     result: list[str] = []
     for platform in item.get("platforms", []) or []:
-        name = platform.get("name") or platform.get("abbreviation")
-        if name and name not in result:
-            result.append(name)
+        if isinstance(platform, dict):
+            name = platform.get("name") or platform.get("abbreviation")
+            if name and name not in result:
+                result.append(name)
     return result
 
 
+def _cover_url(item: dict[str, Any]) -> str | None:
+    cover = item.get("cover") or {}
+    url = cover.get("url") if isinstance(cover, dict) else None
+    if not url:
+        return None
+    if url.startswith("//"):
+        url = "https:" + url
+    return url.replace("t_thumb", "t_cover_big")
+
+
 def _transform_game(item: dict[str, Any]) -> dict[str, Any]:
-    cover = None
-    if item.get("cover", {}).get("url"):
-        cover = item["cover"]["url"]
-        if cover.startswith("//"):
-            cover = "https:" + cover
-        cover = cover.replace("t_thumb", "t_cover_big")
     platforms = _platforms(item)
-    has_ps5 = any(p in ("PlayStation 5", "PS5") for p in platforms)
-    has_ps4 = any(p in ("PlayStation 4", "PS4") for p in platforms)
+    ids = {
+        int(p["id"]) for p in (item.get("platforms") or [])
+        if isinstance(p, dict) and str(p.get("id", "")).isdigit()
+    }
+    has_ps5 = 167 in ids or any(p.casefold() in {"playstation 5", "ps5"} for p in platforms)
+    has_ps4 = 48 in ids or any(p.casefold() in {"playstation 4", "ps4"} for p in platforms)
     return {
         "igdb_id": item.get("id"),
         "igdb_name": item.get("name"),
-        "cover_url": cover,
+        "cover_url": _cover_url(item),
         "platforms": platforms,
         "ps5_exclusive": bool(has_ps5 and not has_ps4),
     }
+
+
+def _igdb_headers(client_id: str, token: str) -> dict[str, str]:
+    return {
+        "Client-ID": client_id,
+        "Authorization": f"Bearer {token}",
+        "Accept": "application/json",
+        "Content-Type": "text/plain",
+    }
+
+
+def _score(item: dict[str, Any], target: str) -> float:
+    candidate = normalize_name(str(item.get("name", ""))).casefold()
+    target = normalize_name(target).casefold()
+    return max(ratio(candidate, target), token_set_ratio(candidate, target), WRatio(candidate, target))
+
+
+def _best_match(items: list[dict[str, Any]], target: str) -> dict[str, Any] | None:
+    if not items:
+        return None
+    best = max(items, key=lambda x: _score(x, target))
+    return best if _score(best, target) >= 72 else None
+
+
+def _build_multiquery(batch: list[str]) -> str:
+    queries = []
+    for i, name in enumerate(batch):
+        escaped = _escape_apicalypse(name)
+        queries.append(
+            f'query games "q{i}" {{ '
+            f'search "{escaped}"; '
+            f'fields id,name,cover.url,platforms.id,platforms.name,platforms.abbreviation; '
+            f'where version_parent = null & (platforms = {{48}} | platforms = {{167}}); '
+            f'limit 10; '
+            f'}};'
+        )
+    return "\n".join(queries)
+
+
+def _post_igdb(url: str, body: str, client_id: str, token: str) -> list[dict[str, Any]]:
+    response = SESSION.post(url, headers=_igdb_headers(client_id, token), data=body.encode("utf-8"), timeout=REQUEST_TIMEOUT)
+    if response.status_code == 429:
+        LOG.warning("IGDB rate limited; retrying after delay")
+        time.sleep(2.5)
+        response = SESSION.post(url, headers=_igdb_headers(client_id, token), data=body.encode("utf-8"), timeout=REQUEST_TIMEOUT)
+    if not response.ok:
+        raise RuntimeError(f"IGDB HTTP {response.status_code}: {response.text[:500]}")
+    data = response.json()
+    if not isinstance(data, list):
+        raise RuntimeError("Unexpected IGDB response")
+    return data
+
+
+def _lookup_single(name: str, client_id: str, token: str) -> dict[str, Any] | None:
+    bodies = [
+        f'fields id,name,cover.url,platforms.id,platforms.name,platforms.abbreviation; search "{_escape_apicalypse(name)}"; where version_parent = null & (platforms = {{48}} | platforms = {{167}}); limit 10;',
+        f'fields id,name,cover.url,platforms.id,platforms.name,platforms.abbreviation; search "{_escape_apicalypse(name)}"; where version_parent = null; limit 10;',
+    ]
+    for body in bodies:
+        try:
+            items = _post_igdb("https://api.igdb.com/v4/games", body, client_id, token)
+            best = _best_match(items, name)
+            if best:
+                return _transform_game(best)
+        except Exception as exc:
+            LOG.warning("IGDB single lookup failed for %s: %s", name, exc)
+        time.sleep(0.25)
+    return None
 
 
 def igdb_batch_lookup(names: list[str], token: str) -> dict[str, dict[str, Any]]:
     client_id = os.environ["IGDB_CLIENT_ID"]
     output: dict[str, dict[str, Any]] = {}
     for start in range(0, len(names), IGDB_BATCH_SIZE):
-        batch = names[start : start + IGDB_BATCH_SIZE]
-        parts: list[str] = []
-        for idx, name in enumerate(batch):
-            escaped = _escape_apicalypse(name)
-            parts.append(
-                f'query games "q{idx}" {{ search "{escaped}"; fields id,name,cover.url,platforms.name,platforms.abbreviation; where platforms !=n & (platforms = 48 | platforms = 167) & version_parent = null; limit 10; }};'
-            )
-        body = "".join(parts)
+        batch = names[start:start + IGDB_BATCH_SIZE]
+        hits = 0
         try:
-            resp = SESSION.post(
-                "https://api.igdb.com/v4/multiquery",
-                headers={"Client-ID": client_id, "Authorization": f"Bearer {token}"},
-                data=body.encode("utf-8"),
-                timeout=REQUEST_TIMEOUT,
-            )
-            if resp.status_code == 429:
-                LOG.warning("IGDB rate limited; retrying batch")
-                time.sleep(3)
-                resp = SESSION.post(
-                    "https://api.igdb.com/v4/multiquery",
-                    headers={"Client-ID": client_id, "Authorization": f"Bearer {token}"},
-                    data=body.encode("utf-8"),
-                    timeout=REQUEST_TIMEOUT,
-                )
-            resp.raise_for_status()
-            for block in resp.json():
-                name = block.get("name", "")
-                items = block.get("result") or []
-                target = normalize_name(batch[int(name[1:])]) if name.startswith("q") and name[1:].isdigit() and int(name[1:]) < len(batch) else ""
-                if not items or not target:
+            blocks = _post_igdb("https://api.igdb.com/v4/multiquery", _build_multiquery(batch), client_id, token)
+            for block in blocks:
+                label = str(block.get("name", ""))
+                if not label.startswith("q") or not label[1:].isdigit():
                     continue
-                ranked = sorted(
-                    items,
-                    key=lambda x: ratio(normalize_name(x.get("name", "")).casefold(), target.casefold()),
-                    reverse=True,
-                )
-                best = ranked[0]
-                best_name = normalize_name(best.get("name", "")).casefold()
-                target_name = target.casefold()
-                score = max(ratio(best_name, target_name), token_set_ratio(best_name, target_name), WRatio(best_name, target_name))
-                if score >= 78:
-                    output[target.casefold()] = _transform_game(best)
+                idx = int(label[1:])
+                if idx >= len(batch):
+                    continue
+                best = _best_match(block.get("result") or [], batch[idx])
+                if best:
+                    output[normalize_name(batch[idx]).casefold()] = _transform_game(best)
+                    hits += 1
         except Exception as exc:
-            LOG.warning("IGDB batch lookup failed: %s", exc)
+            LOG.error("IGDB batch failed (%d-%d): %s", start + 1, start + len(batch), exc)
+            for name in batch:
+                meta = _lookup_single(name, client_id, token)
+                if meta:
+                    output[normalize_name(name).casefold()] = meta
+                    hits += 1
+        LOG.info("IGDB batch %d-%d: %d/%d matched", start + 1, start + len(batch), hits, len(batch))
         if start + IGDB_BATCH_SIZE < len(names):
-            time.sleep(IGDB_SLEEP)
+            time.sleep(max(IGDB_SLEEP, 0.25))
     return output
-
 
 def index_existing(existing: list[dict[str, Any]]) -> tuple[dict[str, dict[str, Any]], dict[str, dict[str, Any]]]:
     by_url: dict[str, dict[str, Any]] = {}
@@ -411,12 +466,31 @@ def main() -> int:
 
     if token and metadata_names:
         metadata = igdb_batch_lookup(metadata_names, token)
+        enriched = 0
+        covers = 0
+        exclusive = 0
         for game in result:
             key = normalize_name(game["name"]).casefold()
-            if key in metadata:
-                game.update(metadata[key])
+            meta = metadata.get(key)
+            if not meta:
+                continue
+            if meta.get("igdb_id"):
+                enriched += 1
+            if meta.get("cover_url"):
+                covers += 1
+            if meta.get("ps5_exclusive"):
+                exclusive += 1
+            game.update(meta)
+        LOG.info("IGDB enrichment: %d/%d matched, %d covers, %d PS5-only", enriched, len(metadata_names), covers, exclusive)
+    elif not token:
+        LOG.warning("No IGDB token; games will be saved without metadata")
 
     result.sort(key=lambda g: (g.get("first_seen", ""), g.get("name", "").casefold()), reverse=True)
+    # Never replace a populated metadata field with a null/empty value.
+    for game in result:
+        if not isinstance(game.get("platforms"), list):
+            game["platforms"] = []
+        game["ps5_exclusive"] = bool(game.get("ps5_exclusive", False))
     save_data(result)
     LOG.info("Saved %d games to %s", len(result), DATA_PATH)
     if used_jina:
