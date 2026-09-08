@@ -67,7 +67,14 @@ def load_data() -> list[dict[str, Any]]:
     if not DATA_PATH.exists():
         return []
     try:
-        raw = json.loads(DATA_PATH.read_text(encoding="utf-8"))
+        text = DATA_PATH.read_text(encoding="utf-8").strip()
+        # An empty file is safe to treat as a fresh dataset. This is useful
+        # for the very first import/reset, while malformed non-empty JSON
+        # still fails loudly so we never silently destroy existing data.
+        if not text:
+            LOG.warning("%s is empty; treating it as a fresh dataset", DATA_PATH)
+            return []
+        raw = json.loads(text)
         if not isinstance(raw, list):
             raise ValueError("games.json must contain a JSON array")
         return [x for x in raw if isinstance(x, dict) and x.get("name")]
