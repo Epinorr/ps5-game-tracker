@@ -1,4 +1,4 @@
-name: Update PS5 games
+name: Update and deploy
 
 on:
   schedule:
@@ -7,14 +7,24 @@ on:
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
+  issues: write
+
+concurrency:
+  group: ps5-tracker
+  cancel-in-progress: false
 
 jobs:
-  update:
+  update-and-deploy:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -24,21 +34,40 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      - name: Run tests
+        run: pytest -q
+
       - name: Update dataset
         env:
           IGDB_CLIENT_ID: ${{ secrets.IGDB_CLIENT_ID }}
           IGDB_CLIENT_SECRET: ${{ secrets.IGDB_CLIENT_SECRET }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
         run: python scripts/update_games.py
 
-      - name: Commit changes
+      - name: Commit dataset changes
+        id: commit
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add data/games.json
-
           if git diff --cached --quiet; then
-            echo 'No changes detected.'
+            echo 'changed=false' >> "$GITHUB_OUTPUT"
+            echo 'No dataset changes.'
           else
-            git commit -m 'chore: update PS5 games dataset'
+            git commit -m 'chore: update PS5 game dataset'
             git push
+            echo 'changed=true' >> "$GITHUB_OUTPUT"
           fi
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: .
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
