@@ -322,8 +322,14 @@ def _score(item: dict[str, Any], target: str) -> float:
 def _best_match(items: list[dict[str, Any]], target: str) -> dict[str, Any] | None:
     if not items:
         return None
-    best = max(items, key=lambda x: _score(x, target))
-    return best if _score(best, target) >= 72 else None
+    target_key = normalize_name(target).casefold()
+    # Prefer exact normalized title matches before fuzzy ranking.
+    for item in items:
+        if normalize_name(str(item.get("name", ""))).casefold() == target_key:
+            return item
+    scored = sorted(((item, _score(item, target)) for item in items), key=lambda x: x[1], reverse=True)
+    best, score_value = scored[0]
+    return best if score_value >= 68 else None
 
 
 def _build_multiquery(batch: list[str]) -> str:
@@ -334,7 +340,7 @@ def _build_multiquery(batch: list[str]) -> str:
             f'query games "q{i}" {{ '
             f'search "{escaped}"; '
             f'fields id,name,cover.url,platforms.id,platforms.name,platforms.abbreviation; '
-            f'where version_parent = null & (platforms = {{48}} | platforms = {{167}}); '
+            f'where version_parent = null; '
             f'limit 10; '
             f'}};'
         )
@@ -357,7 +363,7 @@ def _post_igdb(url: str, body: str, client_id: str, token: str) -> list[dict[str
 
 def _lookup_single(name: str, client_id: str, token: str) -> dict[str, Any] | None:
     bodies = [
-        f'fields id,name,cover.url,platforms.id,platforms.name,platforms.abbreviation; search "{_escape_apicalypse(name)}"; where version_parent = null & (platforms = {{48}} | platforms = {{167}}); limit 10;',
+        f'fields id,name,cover.url,platforms.id,platforms.name,platforms.abbreviation; search "{_escape_apicalypse(name)}"; where version_parent = null; limit 10;',
         f'fields id,name,cover.url,platforms.id,platforms.name,platforms.abbreviation; search "{_escape_apicalypse(name)}"; where version_parent = null; limit 10;',
     ]
     for body in bodies:
@@ -387,10 +393,18 @@ def igdb_batch_lookup(names: list[str], token: str) -> dict[str, dict[str, Any]]
                 idx = int(label[1:])
                 if idx >= len(batch):
                     continue
-                best = _best_match(block.get("result") or [], batch[idx])
+                results = block.get("result") or []
+                best = _best_match(results, batch[idx])
                 if best:
                     output[normalize_name(batch[idx]).casefold()] = _transform_game(best)
                     hits += 1
+                else:
+                    # A successful batch request can still have a weak/no match.
+                    # Try a direct fallback for that one title.
+                    meta = _lookup_single(batch[idx], client_id, token)
+                    if meta:
+                        output[normalize_name(batch[idx]).casefold()] = meta
+                        hits += 1
         except Exception as exc:
             LOG.error("IGDB batch failed (%d-%d): %s", start + 1, start + len(batch), exc)
             for name in batch:
@@ -465,6 +479,7 @@ def main() -> int:
             LOG.error("Could not authenticate to IGDB: %s", exc)
 
     if token and metadata_names:
+        LOG.info("Enriching %d games with IGDB metadata", len(metadata_names))
         metadata = igdb_batch_lookup(metadata_names, token)
         enriched = 0
         covers = 0
