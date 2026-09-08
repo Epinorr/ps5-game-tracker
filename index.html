@@ -4,49 +4,576 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>PS5 Game Tracker</title>
-  <meta name="description" content="Track newly discovered PS5 games and PS5-only titles.">
+  <meta name="description" content="Discover the latest PS5 games and PS5-only releases tracked automatically.">
+  <meta name="theme-color" content="#090b10">
   <meta property="og:title" content="PS5 Game Tracker">
-  <meta property="og:description" content="A simple tracker for newly discovered PS5 games and PS5-only titles.">
+  <meta property="og:description" content="Latest PS5 games, PS5-only titles and direct source links.">
   <meta property="og:type" content="website">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23090b10'/%3E%3Cpath d='M20 42h24M24 20h16v12H24z' fill='none' stroke='%23e6ff4f' stroke-width='5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <meta property="og:image" content="https://images.igdb.com/igdb/image/upload/t_cover_big/co1tsp.jpg">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23090b10'/%3E%3Cpath d='M20 42h24M24 20h16v12H24z' fill='none' stroke='%23ffffff' stroke-width='5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://images.igdb.com">
   <style>
-    :root{color-scheme:dark;--bg:#080a0f;--panel:#10141c;--panel2:#171c26;--text:#f5f7fb;--muted:#929bad;--line:#252c39;--accent:#e6ff4f;--shadow:0 18px 45px rgba(0,0,0,.3)}
-    *{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#1a2432 0,#080a0f 36%);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}a{text-decoration:none;color:inherit}.wrap{width:min(1200px,calc(100% - 28px));margin:auto}.hero{padding:42px 0 20px}.topline{display:flex;justify-content:space-between;align-items:center;gap:16px}.brand{font-weight:900;letter-spacing:.08em}.lang{display:flex;gap:6px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:4px}.lang button{border:0;background:transparent;color:var(--muted);padding:8px 11px;border-radius:8px;cursor:pointer;font:inherit}.lang button.active{background:var(--panel2);color:var(--text)}h1{font-size:clamp(36px,6vw,68px);margin:26px 0 12px;line-height:1.02;max-width:820px}.sub{margin:0;color:var(--muted);line-height:1.8;max-width:760px}.toolbar{margin:24px 0 18px;display:grid;gap:12px}.row{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}.tabs{display:flex;gap:7px;overflow:auto;background:var(--panel);border:1px solid var(--line);padding:5px;border-radius:13px}.tab{white-space:nowrap;border:0;background:transparent;color:var(--muted);padding:10px 13px;border-radius:9px;cursor:pointer;font:inherit}.tab.active{background:var(--panel2);color:var(--text)}.search{width:min(380px,100%);background:var(--panel);border:1px solid var(--line);color:var(--text);padding:12px 14px;border-radius:12px;outline:none}.search:focus{border-color:#414b60}.stats{display:flex;gap:14px;color:var(--muted);font-size:13px}.grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:14px}.card{background:linear-gradient(180deg,#121720,#0d1118);border:1px solid var(--line);border-radius:15px;overflow:hidden;transition:.18s transform,.18s border-color,.18s box-shadow}.card:hover{transform:translateY(-4px);border-color:#414a5b;box-shadow:var(--shadow)}.cover{aspect-ratio:3/4;background:#171c25;overflow:hidden}.cover img{width:100%;height:100%;object-fit:cover;display:block}.placeholder{height:100%;display:grid;place-items:center;padding:18px;color:#70798b;text-align:center;font-size:12px}.body{padding:11px}.name{font-weight:750;line-height:1.4;min-height:2.8em}.meta{margin-top:7px;color:var(--muted);font-size:11px;line-height:1.5}.badge{display:inline-flex;margin-top:8px;padding:4px 7px;border-radius:999px;border:1px solid #e6ff4f2b;background:#e6ff4f12;color:var(--accent);font-size:10px;font-weight:800}.pager{display:flex;justify-content:center;align-items:center;gap:8px;margin:24px 0 40px}.pager button{border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:10px;padding:9px 13px;cursor:pointer}.pager button:disabled{opacity:.4;cursor:not-allowed}.empty{padding:50px 0;text-align:center;color:var(--muted)}footer{border-top:1px solid var(--line);padding:22px 0 40px;color:#717a8c;font-size:12px;line-height:1.8}@media(max-width:1000px){.grid{grid-template-columns:repeat(5,minmax(0,1fr))}}@media(max-width:780px){.grid{grid-template-columns:repeat(4,minmax(0,1fr))}}@media(max-width:560px){.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.wrap{width:min(100% - 18px,1200px)}h1{font-size:40px}.row{align-items:stretch}.search{width:100%}.stats{justify-content:space-between;width:100%}}
+    :root{
+      color-scheme:dark;
+      --bg:#07090d;
+      --bg-soft:#0b0e14;
+      --panel:rgba(18,22,31,.78);
+      --panel-strong:#121721;
+      --panel-2:#181e29;
+      --text:#f5f7fb;
+      --muted:#8e97a8;
+      --muted-2:#667082;
+      --line:rgba(255,255,255,.08);
+      --line-strong:rgba(255,255,255,.14);
+      --accent:#d9ff4f;
+      --accent-2:#a8cf18;
+      --accent-soft:rgba(217,255,79,.12);
+      --blue:#6ea8ff;
+      --shadow:0 24px 80px rgba(0,0,0,.38);
+      --shadow-sm:0 12px 30px rgba(0,0,0,.26);
+      --radius:20px;
+      --radius-sm:14px;
+      --max:1280px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      min-height:100vh;
+      color:var(--text);
+      background:
+        radial-gradient(900px 420px at 8% -4%, rgba(217,255,79,.07), transparent 60%),
+        radial-gradient(700px 420px at 90% 8%, rgba(96,141,255,.09), transparent 60%),
+        linear-gradient(180deg,#080a0f 0%,#07090d 48%,#06080b 100%);
+      font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+      -webkit-font-smoothing:antialiased;
+    }
+    a{text-decoration:none;color:inherit}
+    button,input{font:inherit}
+    button{color:inherit}
+    ::selection{background:var(--accent);color:#10130a}
+
+    .wrap{width:min(var(--max),calc(100% - 32px));margin:0 auto}
+    .site-header{
+      position:sticky;top:0;z-index:50;
+      border-bottom:1px solid rgba(255,255,255,.05);
+      background:rgba(7,9,13,.72);
+      backdrop-filter:blur(18px) saturate(150%);
+    }
+    .nav{
+      min-height:74px;display:flex;align-items:center;justify-content:space-between;gap:18px;
+    }
+    .brand{display:flex;align-items:center;gap:12px;font-size:13px;font-weight:900;letter-spacing:.12em}
+    .brand-mark{
+      width:34px;height:34px;border-radius:11px;display:grid;place-items:center;
+      background:linear-gradient(135deg,#eefb9e 0%,var(--accent) 55%,#9abd12 100%);
+      color:#111509;box-shadow:0 0 0 1px rgba(255,255,255,.16) inset,0 10px 24px rgba(217,255,79,.16);
+    }
+    .brand-mark svg{width:20px;height:20px}
+    .nav-right{display:flex;align-items:center;gap:10px}
+    .live-dot{display:flex;align-items:center;gap:7px;padding:8px 11px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.03);color:var(--muted);font-size:11px;font-weight:700}
+    .live-dot i{width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 12px var(--accent);display:block}
+    .lang-switch{
+      display:flex;align-items:center;gap:3px;padding:4px;
+      border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.035);
+    }
+    .lang-btn{
+      border:0;background:transparent;cursor:pointer;padding:7px 9px;border-radius:999px;
+      display:flex;align-items:center;gap:6px;color:var(--muted);font-size:12px;font-weight:800;
+      transition:.18s ease;
+    }
+    .lang-btn.active{color:var(--text);background:rgba(255,255,255,.08)}
+    .flag{font-size:15px;line-height:1}
+
+    .hero{padding:58px 0 30px;position:relative}
+    .hero-grid{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:24px;align-items:end}
+    .eyebrow{
+      display:inline-flex;align-items:center;gap:8px;padding:7px 10px;border:1px solid rgba(217,255,79,.2);
+      background:var(--accent-soft);color:var(--accent);border-radius:999px;font-size:11px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;
+    }
+    .eyebrow span{width:6px;height:6px;border-radius:50%;background:var(--accent)}
+    h1{font-size:clamp(46px,7vw,88px);line-height:.98;letter-spacing:-.055em;margin:18px 0 16px;max-width:950px}
+    .hero-copy{max-width:760px;margin:0;color:var(--muted);line-height:1.8;font-size:15px}
+    .hero-accent{color:var(--text)}
+    .hero-side{
+      min-height:190px;padding:22px;border:1px solid var(--line);border-radius:24px;
+      background:
+        radial-gradient(circle at 85% 10%,rgba(217,255,79,.1),transparent 36%),
+        linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.018));
+      box-shadow:var(--shadow-sm);
+    }
+    .side-label{color:var(--muted-2);font-size:10px;font-weight:900;letter-spacing:.12em;text-transform:uppercase}
+    .side-main{font-size:42px;font-weight:900;letter-spacing:-.04em;margin:9px 0 3px}
+    .side-sub{font-size:12px;color:var(--muted)}
+    .side-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:18px}
+    .mini-stat{padding:12px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.025)}
+    .mini-stat strong{display:block;font-size:16px}
+    .mini-stat span{display:block;margin-top:3px;color:var(--muted-2);font-size:10px}
+
+    .dashboard{
+      display:grid;grid-template-columns:auto minmax(260px,1fr);gap:12px;align-items:center;
+      padding:8px;border:1px solid var(--line);border-radius:18px;background:rgba(15,18,25,.82);
+      box-shadow:var(--shadow-sm);margin-bottom:20px;
+    }
+    .tabs{display:flex;gap:5px;overflow:auto}
+    .tab{
+      white-space:nowrap;border:1px solid transparent;background:transparent;color:var(--muted);
+      padding:11px 14px;border-radius:12px;cursor:pointer;font-weight:800;font-size:12px;transition:.18s ease;
+    }
+    .tab:hover{color:var(--text);background:rgba(255,255,255,.04)}
+    .tab.active{color:#12150c;background:var(--accent);box-shadow:0 8px 24px rgba(217,255,79,.12)}
+    .search-wrap{position:relative}
+    .search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted-2);pointer-events:none}
+    html[dir="rtl"] .search-icon{left:auto;right:14px}
+    .search{
+      width:100%;padding:12px 16px 12px 40px;border:1px solid var(--line);border-radius:12px;
+      background:rgba(255,255,255,.025);color:var(--text);outline:none;font-size:12px;
+      transition:.18s ease;
+    }
+    html[dir="rtl"] .search{padding:12px 40px 12px 16px}
+    .search::placeholder{color:var(--muted-2)}
+    .search:focus{border-color:rgba(217,255,79,.42);box-shadow:0 0 0 4px rgba(217,255,79,.06)}
+
+    .toolbar-meta{display:flex;justify-content:space-between;gap:14px;align-items:center;margin:0 2px 14px;flex-wrap:wrap}
+    .results-label{font-size:12px;color:var(--muted);font-weight:700}
+    .results-label b{color:var(--text)}
+    .update-time{font-size:11px;color:var(--muted-2)}
+
+    .grid{
+      display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:16px;
+    }
+    .card{
+      position:relative;overflow:hidden;border:1px solid var(--line);border-radius:18px;
+      background:linear-gradient(180deg,#121722 0%,#0e1219 100%);
+      transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease;
+      box-shadow:0 10px 30px rgba(0,0,0,.16);
+    }
+    .card:hover{transform:translateY(-6px);border-color:rgba(255,255,255,.15);box-shadow:var(--shadow)}
+    .cover{position:relative;aspect-ratio:3/4;background:#161b24;overflow:hidden}
+    .cover::after{content:"";position:absolute;inset:auto 0 0;height:38%;background:linear-gradient(transparent,rgba(4,5,8,.92));pointer-events:none}
+    .cover img{width:100%;height:100%;display:block;object-fit:cover;transition:transform .45s ease,filter .45s ease}
+    .card:hover .cover img{transform:scale(1.045);filter:saturate(1.06)}
+    .placeholder{height:100%;display:grid;place-items:center;text-align:center;padding:18px;color:var(--muted-2);font-size:11px}
+    .corner-badge{
+      position:absolute;top:10px;left:10px;z-index:3;padding:6px 8px;border-radius:999px;
+      font-size:9px;font-weight:900;letter-spacing:.05em;background:rgba(5,7,10,.72);
+      border:1px solid rgba(255,255,255,.11);backdrop-filter:blur(10px)
+    }
+    html[dir="rtl"] .corner-badge{left:auto;right:10px}
+    .corner-badge.only{background:rgba(217,255,79,.9);color:#11150a;border-color:transparent}
+    .card-body{padding:12px 12px 14px}
+    .name{font-size:13px;font-weight:850;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:2.7em}
+    .meta-row{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:9px;color:var(--muted-2);font-size:10px}
+    .platforms{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .arrow{flex:0 0 auto;width:26px;height:26px;border-radius:9px;display:grid;place-items:center;border:1px solid var(--line);color:var(--muted);transition:.18s ease}
+    .card:hover .arrow{color:var(--accent);border-color:rgba(217,255,79,.24);transform:translateX(2px)}
+    html[dir="rtl"] .card:hover .arrow{transform:translateX(-2px)}
+    .new-pill{color:var(--accent);font-weight:900}
+    .new-dot{display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--accent);vertical-align:middle;margin-inline-end:4px}
+
+    .skeleton{
+      border:1px solid var(--line);border-radius:18px;overflow:hidden;background:#10141c;
+      animation:pulse 1.35s ease-in-out infinite;
+    }
+    .skeleton .sk-cover{aspect-ratio:3/4;background:linear-gradient(105deg,#141922 20%,#1a202b 35%,#141922 50%);background-size:220% 100%;animation:shine 1.5s linear infinite}
+    .sk-body{padding:12px}.sk-line{height:10px;border-radius:99px;background:#191f29;margin:8px 0}.sk-line.short{width:62%}
+    @keyframes shine{to{background-position:-220% 0}}
+    @keyframes pulse{50%{opacity:.72}}
+
+    .empty{
+      border:1px dashed var(--line-strong);border-radius:20px;padding:58px 24px;text-align:center;color:var(--muted);
+      background:rgba(255,255,255,.015)
+    }
+    .empty-icon{width:48px;height:48px;margin:0 auto 12px;display:grid;place-items:center;border:1px solid var(--line);border-radius:14px;color:var(--muted-2);background:rgba(255,255,255,.025)}
+    .empty strong{display:block;color:var(--text);margin-bottom:5px}
+    .pager{display:flex;justify-content:center;align-items:center;gap:10px;margin:26px 0 52px}
+    .pager button{
+      width:42px;height:42px;border:1px solid var(--line);background:var(--panel);border-radius:12px;cursor:pointer;
+      display:grid;place-items:center;transition:.18s ease
+    }
+    .pager button:hover:not(:disabled){border-color:rgba(255,255,255,.15);transform:translateY(-1px)}
+    .pager button:disabled{opacity:.35;cursor:not-allowed}
+    #page{min-width:90px;text-align:center;color:var(--muted);font-size:11px;font-weight:800}
+
+    footer{border-top:1px solid var(--line);padding:24px 0 44px;color:var(--muted-2);font-size:11px;line-height:1.8}
+    .footer-row{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;flex-wrap:wrap}
+    .footer-brand{color:var(--muted);font-weight:850}
+
+    @media(max-width:1120px){.hero-grid{grid-template-columns:1fr 300px}.grid{grid-template-columns:repeat(5,minmax(0,1fr))}}
+    @media(max-width:920px){.hero-grid{grid-template-columns:1fr}.hero-side{min-height:auto}.dashboard{grid-template-columns:1fr}.grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+    @media(max-width:650px){
+      .wrap{width:min(100% - 18px,var(--max))}
+      .nav{min-height:66px}
+      .live-dot{display:none}
+      .hero{padding:38px 0 22px}
+      h1{font-size:44px;letter-spacing:-.045em}
+      .hero-copy{font-size:13px}
+      .dashboard{padding:6px}
+      .tabs{padding-bottom:1px}
+      .tab{padding:10px 12px}
+      .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+      .card{border-radius:15px}
+      .card-body{padding:10px 10px 12px}
+      .name{font-size:12px}
+    }
+    @media(prefers-reduced-motion:reduce){
+      *,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}
+    }
   </style>
 </head>
 <body>
-<div class="wrap">
-  <header class="hero">
-    <div class="topline"><div class="brand">PS5 GAME TRACKER</div><div class="lang"><button id="lang-fa">فا</button><button id="lang-en">EN</button></div></div>
-    <h1 id="title">PS5 Game Tracker</h1>
-    <p id="sub" class="sub">Automatically updated PS5 game tracking, with quick links to each source page.</p>
+  <header class="site-header">
+    <div class="wrap nav">
+      <a class="brand" href="./" aria-label="PS5 Game Tracker">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M7.4 8.1h9.2v7.8H7.4z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+            <path d="M5 18.2h14M9.7 5.2h4.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </span>
+        <span>PS5 GAME TRACKER</span>
+      </a>
+      <div class="nav-right">
+        <div class="live-dot"><i></i><span id="liveLabel">Auto-updated</span></div>
+        <div class="lang-switch" role="group" aria-label="Language">
+          <button class="lang-btn" id="lang-fa" type="button"><span class="flag">🇮🇷</span><span>FA</span></button>
+          <button class="lang-btn active" id="lang-en" type="button"><span class="flag">🇬🇧</span><span>EN</span></button>
+        </div>
+      </div>
+    </div>
   </header>
-  <section class="toolbar">
-    <div class="row"><div class="tabs"><button class="tab active" data-tab="recent">Latest · 72h</button><button class="tab" data-tab="exclusive">PS5 Only</button><button class="tab" data-tab="all">All</button></div><input id="search" class="search" type="search" placeholder="Search games…"></div>
-    <div class="row"><div class="stats"><span id="count">0 games</span><span id="updated">Loading…</span></div></div>
-  </section>
-  <main id="grid" class="grid"></main>
-  <div id="empty" class="empty" hidden></div>
-  <div class="pager"><button id="prev">←</button><span id="page">1 / 1</span><button id="next">→</button></div>
-  <footer id="footer">Source links point to DLPSGames. “Latest” is based on the first time this tracker observed a title.</footer>
-</div>
-<script>
-const state={games:[],tab:'recent',query:'',page:1,perPage:60,lang:'en'};
-const $=id=>document.getElementById(id);
-const I18N={en:{title:'PS5 Game Tracker',sub:'Automatically updated PS5 game tracking, with quick links to each source page.',latest:'Latest · 72h',exclusive:'PS5 Only',all:'All',search:'Search games…',games:n=>`${n} games`,latestDiscovery:d=>`Latest discovery: ${d}`,loading:'Loading…',empty:'No games match this view.',missing:'No cover available',unknown:'Platform info unavailable',only:'PS5 ONLY',footer:'Source links point to DLPSGames. “Latest” is based on the first time this tracker observed a title.'},fa:{title:'PS5 Game Tracker',sub:'ردیابی خودکار بازی‌های PS5 با دسترسی مستقیم به صفحه هر بازی.',latest:'جدید · ۷۲ ساعت',exclusive:'PS5 Only',all:'همه',search:'جستجوی بازی…',games:n=>`${n.toLocaleString('fa-IR')} بازی`,latestDiscovery:d=>`آخرین کشف: ${d}`,loading:'در حال بارگذاری…',empty:'بازی‌ای مطابق این فیلتر پیدا نشد.',missing:'تصویری ثبت نشده',unknown:'اطلاعات پلتفرم موجود نیست',only:'PS5 ONLY',footer:'لینک هر کارت به صفحه بازی در DLPSGames می‌رود. «جدید» بر اساس اولین مشاهده عنوان توسط این Tracker محاسبه می‌شود.'}};
-function text(){return I18N[state.lang]}
-function safeStorageGet(){try{return localStorage.getItem('ps5-tracker-lang')}catch{return null}}
-function safeStorageSet(v){try{localStorage.setItem('ps5-tracker-lang',v)}catch{}}
-function escapeHtml(s=''){return String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
-function hoursSince(d){const t=new Date(d).getTime();return Number.isFinite(t)?(Date.now()-t)/36e5:Infinity}
-function recent(g){return hoursSince(g.first_seen)<=72}
-function setLang(lang){state.lang=lang;safeStorageSet(lang);document.documentElement.lang=lang;document.documentElement.dir=lang==='fa'?'rtl':'ltr';$('title').textContent=text().title;$('sub').textContent=text().sub;$('search').placeholder=text().search;$('footer').textContent=text().footer;document.querySelector('[data-tab="recent"]').textContent=text().latest;document.querySelector('[data-tab="exclusive"]').textContent=text().exclusive;document.querySelector('[data-tab="all"]').textContent=text().all;$('lang-fa').classList.toggle('active',lang==='fa');$('lang-en').classList.toggle('active',lang==='en');render()}
-function card(g){const href=g.source_url||'#';const img=g.cover_url?`<img loading="lazy" src="${escapeHtml(g.cover_url)}" alt="${escapeHtml(g.name)}">`:`<div class="placeholder">${text().missing}</div>`;const platforms=(g.platforms||[]).join(' · ')||text().unknown;const badge=g.ps5_exclusive?`<div class="badge">${text().only}</div>`:'';return `<a class="card" href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer"><div class="cover">${img}</div><div class="body"><div class="name">${escapeHtml(g.name)}</div><div class="meta">${escapeHtml(platforms)}</div>${badge}</div></a>`}
-function render(){let games=state.games.filter(g=>!state.query||String(g.name).toLocaleLowerCase().includes(state.query.toLocaleLowerCase()));if(state.tab==='recent')games=games.filter(recent);if(state.tab==='exclusive')games=games.filter(g=>g.ps5_exclusive===true);games.sort((a,b)=>new Date(b.first_seen||0)-new Date(a.first_seen||0));const pages=Math.max(1,Math.ceil(games.length/state.perPage));state.page=Math.min(state.page,pages);const start=(state.page-1)*state.perPage;const visible=games.slice(start,start+state.perPage);$('grid').innerHTML=visible.map(card).join('');$('empty').hidden=games.length>0;$('empty').textContent=text().empty;$('count').textContent=text().games(games.length);$('page').textContent=`${state.page} / ${pages}`;$('prev').disabled=state.page<=1;$('next').disabled=state.page>=pages}
-document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));b.classList.add('active');state.tab=b.dataset.tab;state.page=1;render()}));$('search').addEventListener('input',e=>{state.query=e.target.value;state.page=1;render()});$('prev').addEventListener('click',()=>{state.page--;render();scrollTo({top:0,behavior:'smooth'})});$('next').addEventListener('click',()=>{state.page++;render();scrollTo({top:0,behavior:'smooth'})});$('lang-fa').addEventListener('click',()=>setLang('fa'));$('lang-en').addEventListener('click',()=>setLang('en'));
-fetch('./data/games.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error(`HTTP ${r.status}`);return r.json()}).then(data=>{state.games=Array.isArray(data)?data:[];const dates=state.games.map(g=>new Date(g.first_seen).getTime()).filter(Number.isFinite);$('updated').textContent=dates.length?text().latestDiscovery(new Date(Math.max(...dates)).toLocaleString(state.lang==='fa'?'fa-IR':'en-US',{dateStyle:'medium'})):'';render()}).catch(err=>{$('updated').textContent='';$('empty').hidden=false;$('empty').textContent=`${text().empty} (${err.message})`});
-setLang(safeStorageGet()==='fa'?'fa':'en');
-</script>
+
+  <div class="wrap">
+    <main>
+      <section class="hero">
+        <div class="hero-grid">
+          <div>
+            <div class="eyebrow"><span></span><span id="eyebrowText">PS5 DATABASE</span></div>
+            <h1 id="title">PS5 Game Tracker</h1>
+            <p id="sub" class="hero-copy">
+              A live, automatically updated catalog of <span class="hero-accent">newly discovered PS5 games</span> and PS5-only titles — with direct links to their source pages.
+            </p>
+          </div>
+          <aside class="hero-side" aria-label="Tracker summary">
+            <div class="side-label" id="sideLabel">Tracker snapshot</div>
+            <div class="side-main" id="heroTotal">—</div>
+            <div class="side-sub" id="heroTotalLabel">games indexed</div>
+            <div class="side-grid">
+              <div class="mini-stat"><strong id="recentTotal">—</strong><span id="recentLabel">new · 72h</span></div>
+              <div class="mini-stat"><strong id="exclusiveTotal">—</strong><span id="exclusiveLabel">PS5 only</span></div>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="dashboard" aria-label="Game filters">
+        <div class="tabs">
+          <button class="tab active" data-tab="recent" type="button">Latest · 72h</button>
+          <button class="tab" data-tab="exclusive" type="button">PS5 Only</button>
+          <button class="tab" data-tab="all" type="button">All</button>
+        </div>
+        <div class="search-wrap">
+          <span class="search-icon" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="1.8"/><path d="m16 16 5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </span>
+          <input id="search" class="search" type="search" autocomplete="off" placeholder="Search games…">
+        </div>
+      </section>
+
+      <div class="toolbar-meta">
+        <div class="results-label" id="count"><b>0</b> games</div>
+        <div class="update-time" id="updated">Loading…</div>
+      </div>
+
+      <section id="grid" class="grid" aria-live="polite"></section>
+
+      <div id="empty" class="empty" hidden>
+        <div class="empty-icon" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 6v6l4 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.8"/></svg>
+        </div>
+        <strong id="emptyTitle">No games found</strong>
+        <span id="emptyText">No games match this view.</span>
+      </div>
+
+      <div class="pager">
+        <button id="prev" type="button" aria-label="Previous page">←</button>
+        <span id="page">1 / 1</span>
+        <button id="next" type="button" aria-label="Next page">→</button>
+      </div>
+    </main>
+
+    <footer>
+      <div class="footer-row">
+        <div><span class="footer-brand">PS5 Game Tracker</span> · <span id="footer">Source links point to DLPSGames. “Latest” is based on the first time this tracker observed a title.</span></div>
+        <div>IGDB metadata · GitHub Pages</div>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    const state = {games:[],tab:'recent',query:'',page:1,perPage:60,lang:'en'};
+
+    const $ = id => document.getElementById(id);
+    const I18N = {
+      en:{
+        eyebrow:'PS5 DATABASE',
+        title:'PS5 Game Tracker',
+        sub:'A live, automatically updated catalog of <span class="hero-accent">newly discovered PS5 games</span> and PS5-only titles — with direct links to their source pages.',
+        side:'Tracker snapshot',
+        total:'games indexed',
+        recent:'new · 72h',
+        only:'PS5 only',
+        latest:'Latest · 72h',
+        exclusive:'PS5 Only',
+        all:'All',
+        search:'Search games…',
+        games:n=>`<b>${n.toLocaleString('en-US')}</b> games`,
+        loading:'Loading…',
+        latestDiscovery:d=>`Updated ${d}`,
+        emptyTitle:'No games found',
+        empty:'No games match this view.',
+        missing:'No cover available',
+        unknown:'Platform info unavailable',
+        onlyBadge:'PS5 ONLY',
+        newBadge:'NEW',
+        auto:'Auto-updated',
+        footer:'Source links point to DLPSGames. “Latest” is based on the first time this tracker observed a title.'
+      },
+      fa:{
+        eyebrow:'PS5 DATABASE',
+        title:'PS5 Game Tracker',
+        sub:'فهرست زنده و خودکار <span class="hero-accent">بازی‌های جدید PS5</span> و عناوین انحصاری PS5، با لینک مستقیم به صفحه منبع هر بازی.',
+        side:'وضعیت Tracker',
+        total:'بازی ثبت شده',
+        recent:'جدید · ۷۲ ساعت',
+        only:'فقط PS5',
+        latest:'جدید · ۷۲ ساعت',
+        exclusive:'فقط PS5',
+        all:'همه',
+        search:'جستجوی بازی…',
+        games:n=>`<b>${n.toLocaleString('fa-IR')}</b> بازی`,
+        loading:'در حال بارگذاری…',
+        latestDiscovery:d=>`به‌روزرسانی ${d}`,
+        emptyTitle:'بازی‌ای پیدا نشد',
+        empty:'هیچ بازی‌ای با این فیلتر مطابقت ندارد.',
+        missing:'کاوری ثبت نشده',
+        unknown:'اطلاعات پلتفرم موجود نیست',
+        onlyBadge:'فقط PS5',
+        newBadge:'جدید',
+        auto:'به‌روزرسانی خودکار',
+        footer:'لینک هر کارت به صفحه بازی در DLPSGames می‌رود. «جدید» بر اساس اولین مشاهده عنوان توسط این Tracker محاسبه می‌شود.'
+      }
+    };
+
+    function text(){ return I18N[state.lang]; }
+
+    function safeStorageGet(){
+      try { return localStorage.getItem('ps5-tracker-lang'); } catch { return null; }
+    }
+    function safeStorageSet(v){
+      try { localStorage.setItem('ps5-tracker-lang',v); } catch {}
+    }
+
+    function escapeHtml(s=''){
+      return String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+    }
+
+    function safeUrl(url=''){
+      try {
+        const u = new URL(url, location.href);
+        return /^https?:$/.test(u.protocol) ? u.href : '#';
+      } catch { return '#'; }
+    }
+
+    function hoursSince(d){
+      const t = new Date(d).getTime();
+      return Number.isFinite(t) ? (Date.now()-t)/36e5 : Infinity;
+    }
+
+    function recent(g){ return hoursSince(g.first_seen) <= 72; }
+
+    function formatPlatforms(g){
+      const list = Array.isArray(g.platforms) ? g.platforms : [];
+      const cleaned = list.map(x=>String(x).replace(/^PlayStation\s*/i,'PS').replace(/\s+/g,' ').trim());
+      return [...new Set(cleaned)].join(' · ') || text().unknown;
+    }
+
+    function setLang(lang){
+      state.lang = lang;
+      safeStorageSet(lang);
+      document.documentElement.lang = lang;
+      document.documentElement.dir = lang === 'fa' ? 'rtl' : 'ltr';
+
+      $('eyebrowText').textContent = text().eyebrow;
+      $('title').textContent = text().title;
+      $('sub').innerHTML = text().sub;
+      $('sideLabel').textContent = text().side;
+      $('heroTotalLabel').textContent = text().total;
+      $('recentLabel').textContent = text().recent;
+      $('exclusiveLabel').textContent = text().only;
+      $('search').placeholder = text().search;
+      $('liveLabel').textContent = text().auto;
+      $('footer').textContent = text().footer;
+      $('emptyTitle').textContent = text().emptyTitle;
+      $('emptyText').textContent = text().empty;
+
+      document.querySelector('[data-tab="recent"]').textContent = text().latest;
+      document.querySelector('[data-tab="exclusive"]').textContent = text().exclusive;
+      document.querySelector('[data-tab="all"]').textContent = text().all;
+
+      $('lang-fa').classList.toggle('active',lang==='fa');
+      $('lang-en').classList.toggle('active',lang==='en');
+
+      render();
+    }
+
+    function card(g){
+      const href = safeUrl(g.source_url || '#');
+      const cover = g.cover_url
+        ? `<img loading="lazy" decoding="async" src="${escapeHtml(g.cover_url)}" alt="${escapeHtml(g.name)}" onerror="this.closest('.cover').querySelector('.fallback-cover').hidden=false;this.hidden=true">`
+        : '';
+      const fallback = `<div class="placeholder fallback-cover"${g.cover_url?' hidden':''}>${text().missing}</div>`;
+      const badge = g.ps5_exclusive
+        ? `<span class="corner-badge only">${text().onlyBadge}</span>`
+        : (recent(g) ? `<span class="corner-badge">${text().newBadge}</span>` : '');
+      const platforms = formatPlatforms(g);
+      const recentMark = recent(g) ? `<span class="new-pill"><span class="new-dot"></span>${text().newBadge}</span>` : '';
+      const sourceOk = href !== '#';
+
+      return `
+        <a class="card" href="${escapeHtml(sourceOk ? href : '#')}" ${sourceOk?'target="_blank" rel="noopener noreferrer"':''} aria-label="${escapeHtml(g.name)}">
+          <div class="cover">
+            ${cover}
+            ${fallback}
+            ${badge}
+          </div>
+          <div class="card-body">
+            <div class="name">${escapeHtml(g.name)}</div>
+            <div class="meta-row">
+              <span class="platforms">${escapeHtml(platforms)}</span>
+              ${recentMark || '<span></span>'}
+              <span class="arrow" aria-hidden="true">↗</span>
+            </div>
+          </div>
+        </a>`;
+    }
+
+    function skeletons(n=12){
+      return Array.from({length:n},()=>`
+        <div class="skeleton">
+          <div class="sk-cover"></div>
+          <div class="sk-body"><div class="sk-line"></div><div class="sk-line short"></div></div>
+        </div>`).join('');
+    }
+
+    function filteredGames(){
+      let games = state.games.filter(g=>{
+        const q = state.query.trim().toLocaleLowerCase();
+        const name = String(g.name||'').toLocaleLowerCase();
+        return !q || name.includes(q);
+      });
+
+      if(state.tab==='recent') games = games.filter(recent);
+      if(state.tab==='exclusive') games = games.filter(g=>g.ps5_exclusive===true);
+
+      games.sort((a,b)=>new Date(b.first_seen||0)-new Date(a.first_seen||0));
+      return games;
+    }
+
+    function renderHeroStats(){
+      const recentCount = state.games.filter(recent).length;
+      const exclusiveCount = state.games.filter(g=>g.ps5_exclusive===true).length;
+      $('heroTotal').textContent = state.games.length.toLocaleString(state.lang==='fa'?'fa-IR':'en-US');
+      $('recentTotal').textContent = recentCount.toLocaleString(state.lang==='fa'?'fa-IR':'en-US');
+      $('exclusiveTotal').textContent = exclusiveCount.toLocaleString(state.lang==='fa'?'fa-IR':'en-US');
+    }
+
+    function render(){
+      const games = filteredGames();
+      const pages = Math.max(1,Math.ceil(games.length/state.perPage));
+      state.page = Math.min(Math.max(state.page,1),pages);
+
+      const start = (state.page-1)*state.perPage;
+      const visible = games.slice(start,start+state.perPage);
+
+      $('grid').innerHTML = visible.map(card).join('');
+      $('grid').hidden = games.length===0;
+      $('empty').hidden = games.length>0;
+
+      $('count').innerHTML = text().games(games.length);
+      $('page').textContent = `${state.page} / ${pages}`;
+      $('prev').disabled = state.page<=1;
+      $('next').disabled = state.page>=pages;
+      renderHeroStats();
+    }
+
+    function updateTimestamp(){
+      const dates = state.games.map(g=>new Date(g.first_seen).getTime()).filter(Number.isFinite);
+      if(!dates.length){ $('updated').textContent=''; return; }
+      const d = new Date(Math.max(...dates));
+      $('updated').textContent = text().latestDiscovery(
+        d.toLocaleString(state.lang==='fa'?'fa-IR':'en-US',{dateStyle:'medium',timeStyle:'short'})
+      );
+    }
+
+    function setLoading(){
+      $('grid').hidden=false;
+      $('empty').hidden=true;
+      $('grid').innerHTML=skeletons();
+      $('updated').textContent=text().loading;
+      $('count').innerHTML=text().games(0);
+    }
+
+    document.querySelectorAll('.tab').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+        btn.classList.add('active');
+        state.tab=btn.dataset.tab;
+        state.page=1;
+        render();
+      });
+    });
+
+    $('search').addEventListener('input',e=>{
+      state.query=e.target.value;
+      state.page=1;
+      render();
+    });
+
+    $('prev').addEventListener('click',()=>{
+      if(state.page>1){ state.page--; render(); window.scrollTo({top:0,behavior:'smooth'}); }
+    });
+    $('next').addEventListener('click',()=>{
+      state.page++;
+      render();
+      window.scrollTo({top:0,behavior:'smooth'});
+    });
+
+    $('lang-fa').addEventListener('click',()=>setLang('fa'));
+    $('lang-en').addEventListener('click',()=>setLang('en'));
+
+    async function loadGames(){
+      setLoading();
+      try{
+        const response = await fetch('./data/games.json',{cache:'no-store'});
+        if(!response.ok) throw new Error(`HTTP ${response.status}`);
+        const data = await response.json();
+        state.games = Array.isArray(data) ? data : [];
+        updateTimestamp();
+        render();
+      }catch(err){
+        state.games=[];
+        $('grid').hidden=true;
+        $('empty').hidden=false;
+        $('emptyTitle').textContent=text().emptyTitle;
+        $('emptyText').textContent=`${text().empty} (${err.message})`;
+        $('count').innerHTML=text().games(0);
+        renderHeroStats();
+      }
+    }
+
+    setLang(safeStorageGet()==='fa'?'fa':'en');
+    loadGames();
+  </script>
 </body>
 </html>
