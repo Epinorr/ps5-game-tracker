@@ -1,5 +1,17 @@
 [
   {
+    "name": "Synapse",
+    "first_seen": "2026-09-10T04:49:15Z",
+    "platforms": [
+      "PlayStation VR2"
+    ],
+    "ps5_exclusive": false,
+    "cover_url": "https://images.igdb.com/igdb/image/upload/t_cover_big/co6z2p.jpg",
+    "source_url": "https://dlpsgame.com/synapse-ps5",
+    "igdb_id": 239381,
+    "igdb_name": "Synapse"
+  },
+  {
     "name": "**List Game **",
     "first_seen": "2026-09-08T11:08:53Z",
     "platforms": [],

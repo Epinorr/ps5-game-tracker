@@ -14011,5 +14011,17 @@
   "all guide install": {
     "meta": {},
     "checked_at": "2026-09-08T11:15:32Z"
+  },
+  "synapse": {
+    "meta": {
+      "igdb_id": 239381,
+      "igdb_name": "Synapse",
+      "cover_url": "https://images.igdb.com/igdb/image/upload/t_cover_big/co6z2p.jpg",
+      "platforms": [
+        "PlayStation VR2"
+      ],
+      "ps5_exclusive": false
+    },
+    "checked_at": "2026-09-10T04:49:16Z"
   }
 }
