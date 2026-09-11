@@ -1,5 +1,20 @@
 [
   {
+    "name": "Big Helmet Heroes",
+    "first_seen": "2026-09-11T04:46:38Z",
+    "platforms": [
+      "Xbox Series X|S",
+      "PC (Microsoft Windows)",
+      "PlayStation 5",
+      "Nintendo Switch"
+    ],
+    "ps5_exclusive": true,
+    "cover_url": "https://images.igdb.com/igdb/image/upload/t_cover_big/co9dv3.jpg",
+    "source_url": "https://dlpsgame.com/big-helmet-heroes-ps5",
+    "igdb_id": 303205,
+    "igdb_name": "Big Helmet Heroes"
+  },
+  {
     "name": "Synapse",
     "first_seen": "2026-09-10T04:49:15Z",
     "platforms": [

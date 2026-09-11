@@ -14023,5 +14023,20 @@
       "ps5_exclusive": false
     },
     "checked_at": "2026-09-10T04:49:16Z"
+  },
+  "big helmet heroes": {
+    "meta": {
+      "igdb_id": 303205,
+      "igdb_name": "Big Helmet Heroes",
+      "cover_url": "https://images.igdb.com/igdb/image/upload/t_cover_big/co9dv3.jpg",
+      "platforms": [
+        "Xbox Series X|S",
+        "PC (Microsoft Windows)",
+        "PlayStation 5",
+        "Nintendo Switch"
+      ],
+      "ps5_exclusive": true
+    },
+    "checked_at": "2026-09-11T04:46:39Z"
   }
 }
