@@ -14038,5 +14038,36 @@
       "ps5_exclusive": true
     },
     "checked_at": "2026-09-11T04:46:39Z"
+  },
+  "snoopy and the great mystery club deluxe edition": {
+    "meta": {
+      "igdb_id": 368775,
+      "igdb_name": "Snoopy & The Great Mystery Club: Deluxe Edition",
+      "cover_url": "https://images.igdb.com/igdb/image/upload/t_cover_big/coak7h.jpg",
+      "platforms": [
+        "Xbox Series X|S",
+        "PC (Microsoft Windows)",
+        "Nintendo Switch"
+      ],
+      "ps5_exclusive": false
+    },
+    "checked_at": "2026-09-12T15:35:06Z"
+  },
+  "wrc 10 deluxe edition": {
+    "meta": {
+      "igdb_id": 169202,
+      "igdb_name": "WRC 10: Deluxe Edition",
+      "cover_url": "https://images.igdb.com/igdb/image/upload/t_cover_big/co3t40.jpg",
+      "platforms": [
+        "Xbox Series X|S",
+        "PlayStation 4",
+        "PC (Microsoft Windows)",
+        "PlayStation 5",
+        "Xbox One",
+        "Nintendo Switch"
+      ],
+      "ps5_exclusive": false
+    },
+    "checked_at": "2026-09-12T15:35:06Z"
   }
 }

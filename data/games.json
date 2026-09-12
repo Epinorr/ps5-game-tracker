@@ -1,5 +1,36 @@
 [
   {
+    "name": "WRC 10 Deluxe Edition",
+    "first_seen": "2026-09-12T15:35:05Z",
+    "platforms": [
+      "Xbox Series X|S",
+      "PlayStation 4",
+      "PC (Microsoft Windows)",
+      "PlayStation 5",
+      "Xbox One",
+      "Nintendo Switch"
+    ],
+    "ps5_exclusive": false,
+    "cover_url": "https://images.igdb.com/igdb/image/upload/t_cover_big/co3t40.jpg",
+    "source_url": "https://dlpsgame.com/wrc-10-deluxe-edition-ps5",
+    "igdb_id": 169202,
+    "igdb_name": "WRC 10: Deluxe Edition"
+  },
+  {
+    "name": "Snoopy and The Great Mystery Club Deluxe Edition",
+    "first_seen": "2026-09-12T15:35:05Z",
+    "platforms": [
+      "Xbox Series X|S",
+      "PC (Microsoft Windows)",
+      "Nintendo Switch"
+    ],
+    "ps5_exclusive": false,
+    "cover_url": "https://images.igdb.com/igdb/image/upload/t_cover_big/coak7h.jpg",
+    "source_url": "https://dlpsgame.com/snoopy-and-the-great-mystery-club-deluxe-edition-ps5",
+    "igdb_id": 368775,
+    "igdb_name": "Snoopy & The Great Mystery Club: Deluxe Edition"
+  },
+  {
     "name": "Big Helmet Heroes",
     "first_seen": "2026-09-11T04:46:38Z",
     "platforms": [
