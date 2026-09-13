@@ -14073,5 +14073,100 @@
   "football manager 26 console edition": {
     "meta": {},
     "checked_at": "2026-09-13T11:58:19Z"
+  },
+  "boti byteland overclocked": {
+    "meta": {
+      "igdb_id": 221164,
+      "igdb_name": "Boti: Byteland Overclocked",
+      "cover_url": "https://images.igdb.com/igdb/image/upload/t_cover_big/co8i8y.jpg",
+      "platforms": [
+        "Xbox Series X|S",
+        "PlayStation 4",
+        "PC (Microsoft Windows)",
+        "PlayStation 5",
+        "Xbox One",
+        "Nintendo Switch"
+      ],
+      "ps5_exclusive": false
+    },
+    "checked_at": "2026-09-13T16:23:23Z"
+  },
+  "multiversus": {
+    "meta": {
+      "igdb_id": 182278,
+      "igdb_name": "MultiVersus",
+      "cover_url": "https://images.igdb.com/igdb/image/upload/t_cover_big/co7yle.jpg",
+      "platforms": [
+        "Xbox Series X|S",
+        "PlayStation 4",
+        "PC (Microsoft Windows)",
+        "PlayStation 5",
+        "Xbox One"
+      ],
+      "ps5_exclusive": false
+    },
+    "checked_at": "2026-09-13T16:23:23Z"
+  },
+  "road of death": {
+    "meta": {
+      "igdb_id": 290631,
+      "igdb_name": "Road of Death",
+      "cover_url": "https://images.igdb.com/igdb/image/upload/t_cover_big/co7vmk.jpg",
+      "platforms": [
+        "PC (Microsoft Windows)"
+      ],
+      "ps5_exclusive": false
+    },
+    "checked_at": "2026-09-13T16:23:24Z"
+  },
+  "silt": {
+    "meta": {
+      "igdb_id": 152261,
+      "igdb_name": "Silt",
+      "cover_url": "https://images.igdb.com/igdb/image/upload/t_cover_big/co39tu.jpg",
+      "platforms": [
+        "Xbox Series X|S",
+        "PlayStation 4",
+        "Android",
+        "PC (Microsoft Windows)",
+        "iOS",
+        "PlayStation 5",
+        "Xbox One",
+        "Nintendo Switch"
+      ],
+      "ps5_exclusive": false
+    },
+    "checked_at": "2026-09-13T16:23:24Z"
+  },
+  "the smurfs dreams": {
+    "meta": {
+      "igdb_id": 299572,
+      "igdb_name": "The Smurfs: Dreams",
+      "cover_url": "https://images.igdb.com/igdb/image/upload/t_cover_big/co8553.jpg",
+      "platforms": [
+        "Xbox Series X|S",
+        "PlayStation 4",
+        "PC (Microsoft Windows)",
+        "PlayStation 5",
+        "Xbox One",
+        "Nintendo Switch"
+      ],
+      "ps5_exclusive": false
+    },
+    "checked_at": "2026-09-13T16:23:24Z"
+  },
+  "wreckfest complete edition": {
+    "meta": {
+      "igdb_id": 164788,
+      "igdb_name": "Wreckfest: Complete Edition",
+      "cover_url": "https://images.igdb.com/igdb/image/upload/t_cover_big/co3kdw.jpg",
+      "platforms": [
+        "PlayStation 4",
+        "PC (Microsoft Windows)",
+        "Xbox One"
+      ],
+      "ps5_exclusive": false
+    },
+    "checked_at": "2026-09-13T16:23:25Z"
   }
 }

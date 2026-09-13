@@ -1,5 +1,100 @@
 [
   {
+    "name": "Wreckfest Complete Edition",
+    "first_seen": "2026-09-13T16:23:22Z",
+    "platforms": [
+      "PlayStation 4",
+      "PC (Microsoft Windows)",
+      "Xbox One"
+    ],
+    "ps5_exclusive": false,
+    "cover_url": "https://images.igdb.com/igdb/image/upload/t_cover_big/co3kdw.jpg",
+    "source_url": "https://dlpsgame.com/wreckfest-complete-edition-ps5",
+    "igdb_id": 164788,
+    "igdb_name": "Wreckfest: Complete Edition"
+  },
+  {
+    "name": "The Smurfs Dreams",
+    "first_seen": "2026-09-13T16:23:22Z",
+    "platforms": [
+      "Xbox Series X|S",
+      "PlayStation 4",
+      "PC (Microsoft Windows)",
+      "PlayStation 5",
+      "Xbox One",
+      "Nintendo Switch"
+    ],
+    "ps5_exclusive": false,
+    "cover_url": "https://images.igdb.com/igdb/image/upload/t_cover_big/co8553.jpg",
+    "source_url": "https://dlpsgame.com/the-smurfs-dreams-ps5",
+    "igdb_id": 299572,
+    "igdb_name": "The Smurfs: Dreams"
+  },
+  {
+    "name": "Silt",
+    "first_seen": "2026-09-13T16:23:22Z",
+    "platforms": [
+      "Xbox Series X|S",
+      "PlayStation 4",
+      "Android",
+      "PC (Microsoft Windows)",
+      "iOS",
+      "PlayStation 5",
+      "Xbox One",
+      "Nintendo Switch"
+    ],
+    "ps5_exclusive": false,
+    "cover_url": "https://images.igdb.com/igdb/image/upload/t_cover_big/co39tu.jpg",
+    "source_url": "https://dlpsgame.com/silt-ps5",
+    "igdb_id": 152261,
+    "igdb_name": "Silt"
+  },
+  {
+    "name": "Road of Death",
+    "first_seen": "2026-09-13T16:23:22Z",
+    "platforms": [
+      "PC (Microsoft Windows)"
+    ],
+    "ps5_exclusive": false,
+    "cover_url": "https://images.igdb.com/igdb/image/upload/t_cover_big/co7vmk.jpg",
+    "source_url": "https://dlpsgame.com/road-of-death-ps5",
+    "igdb_id": 290631,
+    "igdb_name": "Road of Death"
+  },
+  {
+    "name": "MultiVersus",
+    "first_seen": "2026-09-13T16:23:22Z",
+    "platforms": [
+      "Xbox Series X|S",
+      "PlayStation 4",
+      "PC (Microsoft Windows)",
+      "PlayStation 5",
+      "Xbox One"
+    ],
+    "ps5_exclusive": false,
+    "cover_url": "https://images.igdb.com/igdb/image/upload/t_cover_big/co7yle.jpg",
+    "source_url": "https://dlpsgame.com/multiversus-ps5",
+    "igdb_id": 182278,
+    "igdb_name": "MultiVersus"
+  },
+  {
+    "name": "Boti Byteland Overclocked",
+    "first_seen": "2026-09-13T16:23:22Z",
+    "platforms": [
+      "Xbox Series X|S",
+      "PlayStation 4",
+      "PC (Microsoft Windows)",
+      "PlayStation 5",
+      "Xbox One",
+      "Nintendo Switch"
+    ],
+    "ps5_exclusive": false,
+    "cover_url": "https://images.igdb.com/igdb/image/upload/t_cover_big/co8i8y.jpg",
+    "source_url": "https://dlpsgame.com/boti-byteland-overclocked-ps5",
+    "igdb_id": 221164,
+    "igdb_name": "Boti: Byteland Overclocked"
+  },
+  {
     "name": "Football Manager 26 Console Edition",
     "first_seen": "2026-09-13T11:58:18Z",
     "platforms": [],
